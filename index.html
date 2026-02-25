@@ -660,8 +660,8 @@ the_grid:{
 
 bold_drop:{
   label:'Bold Drop',
-  frameFields:['logo_text','pre_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'New from Rankings.io.',color_cta:'#282828',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_text','pre_header','color_bg','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'New from Rankings.io.',color_bg:'#EEDC82',color_cta:'#282828',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'heading',fields:{text:'Three tools we\u2019re shipping this quarter.',size:'large',align:'left'}},
     {id:'b2',type:'text',fields:{text:'We\u2019ve been heads down building. Here\u2019s what\u2019s coming out of the lab and into your dashboard.'}},
@@ -670,16 +670,18 @@ bold_drop:{
     {id:'b5',type:'cta',fields:{label:'Get Early Access',url:'https://rankings.io',align:'left'}},
   ],
   renderOpen(ff){
-    return `${EH}${EM}<body style="margin:0;padding:0;background:#EEDC82;font-family:Arial,sans-serif;">
+    const bg=ff.color_bg||'#EEDC82';
+    return `${EH}${EM}<body style="margin:0;padding:0;background:${bg};font-family:Arial,sans-serif;">
 <div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
-<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EEDC82;"><tr><td align="center" style="padding:28px 16px;">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:${bg};"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="padding:20px 28px;border-bottom:2px solid rgba(0,0,0,.12);">
   <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#0a0a0a;text-transform:uppercase;">${ff.logo_text}</p>
 </td></tr>`;
   },
   renderClose(ff){
-    return `<tr><td style="padding:18px 28px;border-top:2px solid rgba(0,0,0,.12);">
+    const bg=ff.color_bg||'#EEDC82';
+    return `<tr><td style="padding:18px 28px;border-top:2px solid rgba(0,0,0,.12);background:${bg};">
   <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(0,0,0,.45);line-height:1.7;"><strong style="color:rgba(0,0,0,.6);">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:rgba(0,0,0,.45);">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:rgba(0,0,0,.45);">View in browser</a></p>
 </td></tr>
@@ -833,7 +835,7 @@ function loadFrame(){
   const fr=FRAMES[mode][tplKey];
   ff={...fr.frameDefaults};
   blocks=fr.defaultBlocks.map(b=>({...b,fields:{...b.fields},id:uid()}));
-  expandedBlks=new Set(blocks.length>0?[blocks[0].id]:[]);
+  expandedBlks=new Set(blocks.map(b=>b.id));
   showPicker=false;
   buildSB();renderPrev();
 }
