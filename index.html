@@ -132,6 +132,70 @@
     }
     .img-note a { color: #555; }
 
+    /* ── IMAGE CONTROLS ── */
+    .img-controls {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .img-ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ctrl-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      width: 44px;
+      flex-shrink: 0;
+    }
+    .btn-group {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+    }
+    .btn-seg {
+      padding: 3px 7px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.1s;
+      white-space: nowrap;
+    }
+    .btn-seg:hover { border-color: #444; color: var(--text); }
+    .btn-seg.on { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 500; }
+    .ctrl-select {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      padding: 3px 6px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .ctrl-select option { background: #1a1a1a; }
+    .ctrl-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      padding: 3px 6px;
+      border-radius: 2px;
+    }
+    .ctrl-input:focus { outline: none; border-color: var(--accent); }
+
     /* ── BRAND SWATCHES ── */
     .swatch-row {
       display: flex;
@@ -279,6 +343,35 @@ const TEXTAREA_KEYS = new Set(['body_1','body_2','pull_quote','hero_sub','f1_des
 const COLOR_KEYS    = new Set(['color_header','color_cta','color_accent']);
 const IMAGE_KEYS    = new Set(['img_hero','img_content','img_logo']);
 
+// Per-image companion control keys and position options
+const IMG_META = {
+  img_content: {
+    wKey:    'img_content_w',
+    alignKey:'img_content_align',
+    altKey:  'img_content_alt',
+    posKey:  'img_content_pos',
+    positions: [
+      { value: 'after_headline',      label: 'After Headline' },
+      { value: 'between_paragraphs',  label: 'Between Paragraphs' },
+      { value: 'before_cta',          label: 'Before CTA' },
+    ],
+  },
+  img_hero: {
+    wKey:    'img_hero_w',
+    alignKey:'img_hero_align',
+    altKey:  'img_hero_alt',
+    posKey:  null,   // hero always goes in one place
+    positions: [],
+  },
+  img_logo: {
+    wKey:    'img_logo_w',
+    alignKey:'img_logo_align',
+    altKey:  'img_logo_alt',
+    posKey:  null,
+    positions: [],
+  },
+};
+
 // Rankings.io brand palette
 const BRAND_COLORS = [
   { name: 'Tuxedo',      hex: '#282828' },
@@ -306,6 +399,7 @@ const TEMPLATES = {
         issue_label: 'Issue No. 12 — February 2026',
         headline:    'The one thing your competitors are doing\u00a0that you\u2019re\u00a0not.',
         img_content: '',
+        img_content_w: '100', img_content_align: 'center', img_content_pos: 'after_headline', img_content_alt: '',
         body_1:      'Most law firms treat their website like a billboard. Set it, forget it, hope for the best. But the firms outpacing you are doing something different.',
         body_2:      'They\'re treating their digital presence like a product \u2014 shipping updates, testing ideas, measuring what moves the needle. It\u2019s not glamorous. But it compounds fast.',
         pull_quote:  'The best SEO strategy isn\u2019t the most complex one. It\u2019s the one that actually gets executed.',
@@ -317,11 +411,27 @@ const TEMPLATES = {
         color_cta:   '#C8391A',
       },
       render(f) {
-        const imgBlock = f.img_content ? `
-  <!-- CONTENT IMAGE -->
-  <tr><td style="background:#ffffff;padding:0 36px 28px;">
-    <img src="${f.img_content}" alt="" width="528" style="display:block;width:100%;max-width:528px;height:auto;border:0;" />
-  </td></tr>` : '';
+        // Build image block respecting width, align, position
+        function makeImgBlock(src, wPct, align, alt, outerPad) {
+          if (!src) return '';
+          const maxW = 528; // inner content width
+          const pxW  = Math.round(maxW * parseInt(wPct||'100') / 100);
+          const mlStyle = align === 'right' ? `margin-left:auto;margin-right:0;`
+                        : align === 'left'  ? `margin-left:0;margin-right:auto;`
+                        :                     `margin-left:auto;margin-right:auto;`;
+          return `
+  <tr><td style="background:#ffffff;padding:${outerPad};">
+    <img src="${src}" alt="${alt||''}" width="${pxW}" style="display:block;width:100%;max-width:${pxW}px;height:auto;border:0;${mlStyle}" />
+  </td></tr>`;
+        }
+        const pos   = f.img_content_pos  || 'after_headline';
+        const imgW  = f.img_content_w    || '100';
+        const imgA  = f.img_content_align|| 'center';
+        const imgAlt= f.img_content_alt  || '';
+        const imgSrc= f.img_content      || '';
+        const imgAfterHeadline    = pos === 'after_headline'     ? makeImgBlock(imgSrc, imgW, imgA, imgAlt, '0 36px 20px') : '';
+        const imgBetweenParagraphs= pos === 'between_paragraphs' ? makeImgBlock(imgSrc, imgW, imgA, imgAlt, '0 36px 20px') : '';
+        const imgBeforeCTA        = pos === 'before_cta'         ? makeImgBlock(imgSrc, imgW, imgA, imgAlt, '0 0 24px')    : '';
 
         return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
@@ -354,16 +464,18 @@ const TEMPLATES = {
       <td style="height:1px;background:#e4e4e4;font-size:0;line-height:0;">&nbsp;</td>
     </tr></table>
   </td></tr>
-${imgBlock}
+${imgAfterHeadline}
   <!-- BODY -->
   <tr><td style="background:#ffffff;padding:0 36px 28px;">
     <p style="margin:0 0 22px 0;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.8;color:#1c1c1c;">${f.body_1}</p>
+${imgBetweenParagraphs}
     <p style="margin:0 0 32px 0;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.8;color:#1c1c1c;">${f.body_2}</p>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:36px;"><tr>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:${imgBeforeCTA ? '24px' : '36px'};"><tr>
       <td style="border-left:4px solid ${f.color_cta};padding:18px 22px;background:#F7F6F2;">
         <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:19px;line-height:1.6;color:#0a0a0a;font-style:italic;">\u201c${f.pull_quote}\u201d</p>
       </td>
     </tr></table>
+${imgBeforeCTA}
     <table border="0" cellpadding="0" cellspacing="0"><tr>
       <td style="background:${f.color_cta};border-radius:1px;">
         <a href="${f.cta_url}" style="display:inline-block;padding:15px 30px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">${f.cta_label}</a>
@@ -392,6 +504,7 @@ ${imgBlock}
         eyebrow:      'New — Rank Intelligence',
         hero_headline:'Track rankings that actually mean something.',
         img_hero:     '',
+        img_hero_w: '100', img_hero_align: 'center', img_hero_alt: '',
         hero_sub:     'We rebuilt our rank tracking engine from the ground up. More data points, faster updates, and a view of what\u2019s moving \u2014 and more importantly, what\u2019s not. Available to all clients starting today.',
         f1_title:     'Daily position updates',
         f1_desc:      'See how you moved overnight, not just weekly snapshots. Know before your morning coffee.',
@@ -407,11 +520,18 @@ ${imgBlock}
         color_cta:    '#1D4ED8',
       },
       render(f) {
-        const heroImg = f.img_hero ? `
+        let heroImg = '';
+        if (f.img_hero) {
+          const pxW  = Math.round(600 * parseInt(f.img_hero_w||'100') / 100);
+          const align= f.img_hero_align || 'center';
+          const ml   = align==='right' ? 'auto' : align==='left' ? '0' : 'auto';
+          const mr   = align==='right' ? '0'    : align==='left' ? 'auto' : 'auto';
+          heroImg = `
   <!-- HERO IMAGE -->
   <tr><td style="background:#ffffff;padding:0;">
-    <img src="${f.img_hero}" alt="" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;" />
-  </td></tr>` : '';
+    <img src="${f.img_hero}" alt="${f.img_hero_alt||''}" width="${pxW}" style="display:block;width:100%;max-width:${pxW}px;height:auto;border:0;margin-left:${ml};margin-right:${mr};" />
+  </td></tr>`;
+        }
 
         return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
@@ -628,6 +748,30 @@ function buildSidebar() {
 
     if (IMAGE_KEYS.has(k)) {
       const hasImg = val && val.length > 0;
+      const meta   = IMG_META[k] || {};
+      const wKey   = meta.wKey    || (k+'_w');
+      const aKey   = meta.alignKey|| (k+'_align');
+      const altKey = meta.altKey  || (k+'_alt');
+      const posKey = meta.posKey;
+      const curW   = fields[wKey]   || '100';
+      const curA   = fields[aKey]   || 'center';
+      const curAlt = fields[altKey] || '';
+      const curPos = posKey ? (fields[posKey] || (meta.positions[0]||{}).value || '') : '';
+
+      const wBtns = ['25','50','75','100'].map(w =>
+        `<button class="btn-seg${curW===w?' on':''}" onclick="updImgCtrl('${wKey}','${w}')">${w}%</button>`
+      ).join('');
+      const aBtns = ['left','center','right'].map(a =>
+        `<button class="btn-seg${curA===a?' on':''}" onclick="updImgCtrl('${aKey}','${a}')">${a[0].toUpperCase()+a.slice(1)}</button>`
+      ).join('');
+      const posSelect = posKey && meta.positions.length ? `
+        <div class="img-ctrl-row">
+          <span class="ctrl-label">Place</span>
+          <select class="ctrl-select" onchange="updImgCtrl('${posKey}',this.value)">
+            ${meta.positions.map(p=>`<option value="${p.value}"${curPos===p.value?' selected':''}>${p.label}</option>`).join('')}
+          </select>
+        </div>` : '';
+
       html += `<div class="field-wrap">
         <div class="field-label">${label}</div>
         <div class="img-zone${hasImg?' has-image':''}" id="zone-${k}"
@@ -650,7 +794,22 @@ function buildSidebar() {
           }
         </div>
         <input type="text" class="field-input" placeholder="...or paste an image URL" value="${escH(val)}" oninput="updImg('${k}',this.value,'zone-${k}')">
-        <p class="img-note">For email sends: use a hosted URL (HubSpot File Manager, etc.). Base64 is preview-only.</p>
+        <div class="img-controls">
+          <div class="img-ctrl-row">
+            <span class="ctrl-label">Width</span>
+            <div class="btn-group">${wBtns}</div>
+          </div>
+          <div class="img-ctrl-row">
+            <span class="ctrl-label">Align</span>
+            <div class="btn-group">${aBtns}</div>
+          </div>
+          ${posSelect}
+          <div class="img-ctrl-row">
+            <span class="ctrl-label">Alt text</span>
+            <input class="ctrl-input" type="text" value="${escH(curAlt)}" placeholder="Describe image..." oninput="updImgCtrl('${altKey}',this.value)">
+          </div>
+        </div>
+        <p class="img-note">For email sends: use a hosted URL (HubSpot File Manager). Base64 is preview-only.</p>
       </div>`;
 
     } else if (COLOR_KEYS.has(k)) {
@@ -791,6 +950,12 @@ function updImg(k, url, zoneId) {
 function clearImg(k) {
   fields[k] = '';
   buildSidebar();
+  renderPreview();
+}
+
+function updImgCtrl(ctrlKey, val) {
+  fields[ctrlKey] = val;
+  buildSidebar();   // re-render to update active states on buttons
   renderPreview();
 }
 
