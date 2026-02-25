@@ -24,6 +24,8 @@
     .tst.show{opacity:1}
     .bcp{background:var(--ac);color:#000;border:none;padding:8px 20px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px}
     .bcp:hover{opacity:.88}
+    .bcs{background:none;color:var(--ac);border:1px solid var(--ac);padding:7px 16px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .12s}
+    .bcs:hover{background:rgba(212,255,0,.08)}
 
     .layout{display:flex;height:calc(100vh - 52px)}
 
@@ -132,6 +134,7 @@
   <select class="ts" id="ts" onchange="setTpl(this.value)"></select>
   <div class="sp"></div>
   <span class="tst" id="tst"></span>
+  <button class="bcs" onclick="copyHubSpot()" title="Generates HubSpot Design Manager compatible template">HubSpot Template</button>
   <button class="bcp" onclick="copyHTML()">Copy HTML</button>
 </div>
 
@@ -1104,6 +1107,38 @@ function renderPrev(){
 
 // ── EXPORT ────────────────────────────────────────────────────────────────────
 function copyHTML(){navigator.clipboard.writeText(renderHTML()).then(()=>toast('HTML copied'));}
+
+function copyHubSpot(){
+  const full=renderHTML();
+  // Extract body content (everything between <body> and </body>)
+  const m=full.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  let body=m?m[1].trim():'';
+  // Strip the FORGE hidden preheader div — HubSpot manages preview text via HubL
+  body=body.replace(/<div[^>]*display:\s*none[^>]*>[\s\S]*?<\/div>\s*/i,'').trim();
+  // Build the HubSpot Design Manager compatible template
+  const hs=`<!-- templateType: email
+isAvailableForNewContent: true -->
+<!doctype html>
+<html>
+<head>
+  <title>{% if content.html_title and content.html_title != '' %}{{ content.html_title }}{% else %}{{ content.body.subject }}{% endif %}</title>
+  {% if content.meta_description %}<meta name="description" content="{{ content.meta_description }}"/>{% endif %}
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+  <!-- Preview text (displays after subject line in inbox) -->
+  <div id="preview_text" style="display:none;">{% text "preview_text" label="Preview Text <span class=help-text>This will be used as the preview text that displays in some email clients</span>", value="", no_wrapper=True %}</div>
+  <!-- View as webpage -->
+  {% if content.create_page %}
+  <div style="font-family:Arial,sans-serif;font-size:12px;text-align:center;padding:6px 0;background:#f8f8f8;">Not rendering correctly? <a class="hubspot-mergetag" data-viewaswebpage="true" href="{{ view_as_page_url }}" style="color:#555;">View this email as a web page</a>.</div>
+  {% endif %}
+  <!-- FORGE Email Content -->
+${body}
+</body>
+</html>`;
+  navigator.clipboard.writeText(hs).then(()=>toast('HubSpot template copied — paste into Design Manager'));
+}
 function ctag(t){navigator.clipboard.writeText(t).then(()=>toast('Token copied'));}
 function toast(msg){const el=document.getElementById('tst');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
 
