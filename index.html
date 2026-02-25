@@ -160,6 +160,10 @@ const MERGE={
   Links:['{{ unsubscribe_link }}','{{ view_in_browser_link }}'],
 };
 
+// ── SHAPE HELPER ─────────────────────────────────────────────────────────────
+const SHAPE_RADIUS={square:'0',rounded:'12px',circle:'50%',pill:'999px'};
+function shapeStyle(s){const r=SHAPE_RADIUS[s||'square']||'0';return r==='0'?'':` border-radius:${r};`;}
+
 // ── BLOCK DEFINITIONS ────────────────────────────────────────────────────────
 const BD={
   heading:{
@@ -191,37 +195,46 @@ const BD={
   },
   image:{
     label:'Image', icon:'I',
-    defaults:{src:'',alt:'',w:'100',align:'center'},
+    defaults:{src:'',alt:'',w:'100',align:'center',shape:'square'},
     fieldDefs:[
       {k:'src',l:'Image',t:'image'},
       {k:'alt',l:'Alt Text',t:'input'},
       {k:'w',l:'Width',t:'widthbtns'},
       {k:'align',l:'Align',t:'alignbtns'},
+      {k:'shape',l:'Shape',t:'select',opts:['square','rounded','circle','pill'],note:'Circle & rounded: works in Gmail, Apple Mail, iOS. Outlook desktop shows square.'},
     ],
     render(f,frame){
       const maxW=528, px=Math.round(maxW*parseInt(f.w||'100')/100);
+      const isCircle=f.shape==='circle';
+      const sz=isCircle?Math.min(px,528)+'px':null;
       const ml=f.align==='right'?'auto':f.align==='left'?'0':'auto';
       const mr=f.align==='right'?'0':f.align==='left'?'auto':'auto';
+      const ss=shapeStyle(f.shape);
       const img=f.src
-        ?`<img src="${f.src}" alt="${f.alt||''}" width="${px}" style="display:block;width:100%;max-width:${px}px;height:auto;border:0;margin-left:${ml};margin-right:${mr};">`
-        :`<table border="0" cellpadding="0" cellspacing="0" width="${px}"><tr><td style="height:${Math.round(px*.55)}px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+        ?`<img src="${f.src}" alt="${f.alt||''}" width="${px}"${isCircle?` height="${px}"`:''}
+            style="display:block;width:${px}px;${isCircle?`height:${px}px;object-fit:cover;`:'height:auto;'}border:0;margin-left:${ml};margin-right:${mr};${ss}">`
+        :`<table border="0" cellpadding="0" cellspacing="0" width="${px}" align="${f.align||'left'}"><tr><td style="height:${isCircle?px:Math.round(px*.55)}px;background:#E8E8E6;text-align:center;vertical-align:middle;${ss}"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
       return `<tr><td style="background:#ffffff;padding:16px 36px;">${img}</td></tr>`;
     }
   },
   img_text:{
     label:'Image + Text', icon:'IT',
-    defaults:{src:'',alt:'',side:'left',text:'Pair an image with compelling body copy. Great for showcasing a feature, person, or visual concept alongside context.'},
+    defaults:{src:'',alt:'',side:'left',shape:'square',text:'Pair an image with compelling body copy. Great for showcasing a feature, person, or visual concept alongside context.'},
     fieldDefs:[
       {k:'src',l:'Image',t:'image'},
       {k:'alt',l:'Alt Text',t:'input'},
       {k:'side',l:'Image Side',t:'select',opts:['left','right']},
+      {k:'shape',l:'Image Shape',t:'select',opts:['square','rounded','circle','pill'],note:'Circle works best with a square photo (e.g. headshot). Not rendered in Outlook desktop.'},
       {k:'text',l:'Text',t:'textarea'},
     ],
     render(f,frame){
       const imgW=220;
+      const isCircle=f.shape==='circle';
+      const ss=shapeStyle(f.shape);
       const img=f.src
-        ?`<img src="${f.src}" alt="${f.alt||''}" width="${imgW}" style="display:block;width:${imgW}px;height:auto;border:0;">`
-        :`<table border="0" cellpadding="0" cellspacing="0" width="${imgW}"><tr><td style="height:160px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+        ?`<img src="${f.src}" alt="${f.alt||''}" width="${imgW}"${isCircle?` height="${imgW}"`:''}
+            style="display:block;width:${imgW}px;${isCircle?`height:${imgW}px;object-fit:cover;`:'height:auto;'}border:0;${ss}">`
+        :`<table border="0" cellpadding="0" cellspacing="0" width="${imgW}"><tr><td style="height:${isCircle?imgW:160}px;background:#E8E8E6;text-align:center;vertical-align:middle;${ss}"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
       const imgCell=`<td valign="top" width="${imgW}" style="padding-${f.side==='left'?'right':'left'}:20px;">${img}</td>`;
       const txtCell=`<td valign="top"><p style="margin:0;font-family:Georgia,serif;font-size:15px;line-height:1.8;color:#1c1c1c;">${f.text}</p></td>`;
       return `<tr><td style="background:#ffffff;padding:20px 36px;">
@@ -288,20 +301,25 @@ const BD={
   three_col:{
     label:'3-Col Cards', icon:'|||',
     defaults:{
+      card_shape:'square',
       c1_src:'',c1_title:'Card One',c1_desc:'Short description for this card item goes here.',
       c2_src:'',c2_title:'Card Two',c2_desc:'Short description for this card item goes here.',
       c3_src:'',c3_title:'Card Three',c3_desc:'Short description for this card item goes here.',
     },
     fieldDefs:[
+      {k:'card_shape',l:'Image Shape',t:'select',opts:['square','rounded','circle','pill'],note:'Applies to all 3 card images. Circle = square images recommended.'},
       {k:'c1_src',l:'Card 1 Image',t:'image'},{k:'c1_title',l:'Card 1 Title',t:'input'},{k:'c1_desc',l:'Card 1 Desc',t:'textarea'},
       {k:'c2_src',l:'Card 2 Image',t:'image'},{k:'c2_title',l:'Card 2 Title',t:'input'},{k:'c2_desc',l:'Card 2 Desc',t:'textarea'},
       {k:'c3_src',l:'Card 3 Image',t:'image'},{k:'c3_title',l:'Card 3 Title',t:'input'},{k:'c3_desc',l:'Card 3 Desc',t:'textarea'},
     ],
     render(f,frame){
       const color=frame.color_cta||'#0A0A0A';
+      const isCircle=f.card_shape==='circle';
+      const ss=shapeStyle(f.card_shape);
       const card=(src,title,desc,pad)=>{
-        const img=src?`<img src="${src}" alt="" width="155" style="display:block;width:155px;height:auto;border:0;">`
-          :`<table border="0" cellpadding="0" cellspacing="0" width="155"><tr><td style="height:110px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:8px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+        const img=src
+          ?`<img src="${src}" alt="" width="155"${isCircle?' height="155"':''} style="display:block;width:155px;${isCircle?'height:155px;object-fit:cover;':'height:auto;'}border:0;${ss}">`
+          :`<table border="0" cellpadding="0" cellspacing="0" width="155"><tr><td style="height:${isCircle?155:110}px;background:#E8E8E6;text-align:center;vertical-align:middle;${ss}"><p style="margin:0;font-family:Arial,sans-serif;font-size:8px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
         return `<td valign="top" width="173" style="padding:0 ${pad};">${img}
           <p style="margin:10px 0 5px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;line-height:1.3;">${title}</p>
           <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:#666;">${desc}</p>
@@ -319,17 +337,22 @@ const BD={
   two_col:{
     label:'2-Col Images', icon:'||',
     defaults:{
+      col_shape:'square',
       left_src:'',left_caption:'Caption for the left image.',
       right_src:'',right_caption:'Caption for the right image.',
     },
     fieldDefs:[
+      {k:'col_shape',l:'Image Shape',t:'select',opts:['square','rounded','circle','pill'],note:'Applies to both images.'},
       {k:'left_src',l:'Left Image',t:'image'},{k:'left_caption',l:'Left Caption',t:'input'},
       {k:'right_src',l:'Right Image',t:'image'},{k:'right_caption',l:'Right Caption',t:'input'},
     ],
     render(f,frame){
+      const isCircle=f.col_shape==='circle';
+      const ss=shapeStyle(f.col_shape);
       const col=(src,cap,pad)=>{
-        const img=src?`<img src="${src}" alt="" width="252" style="display:block;width:252px;height:auto;border:0;">`
-          :`<table border="0" cellpadding="0" cellspacing="0" width="252"><tr><td style="height:170px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+        const img=src
+          ?`<img src="${src}" alt="" width="252"${isCircle?' height="252"':''} style="display:block;width:252px;${isCircle?'height:252px;object-fit:cover;':'height:auto;'}border:0;${ss}">`
+          :`<table border="0" cellpadding="0" cellspacing="0" width="252"><tr><td style="height:${isCircle?252:170}px;background:#E8E8E6;text-align:center;vertical-align:middle;${ss}"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
         return `<td valign="top" width="264" style="padding:0 ${pad};">${img}
           <p style="margin:8px 0 0;font-family:Georgia,serif;font-size:12px;line-height:1.6;color:#666;">${cap}</p>
         </td>`;
@@ -931,6 +954,7 @@ function renderBkFields(bk){
   def.fieldDefs.forEach(fd=>{
     const val=bk.fields[fd.k]||'';
     const oid=`bk-${bk.id}-${fd.k}`;
+    const note=fd.note?`<p class="in" style="margin-top:5px;color:#555;font-style:italic;">${fd.note}</p>`:'';
     if(fd.t==='image'){
       const hasImg=val.length>0;
       h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
@@ -944,30 +968,30 @@ function renderBkFields(bk){
             :`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop or click</span></div>`}
         </div>
         <input type="text" class="fi" placeholder="...or paste URL" value="${eh(val)}" oninput="updBkImg('${bk.id}','${fd.k}',this.value,'iz-${oid}')">
-        <p class="in">Use hosted URL for actual sends.</p>
+        <p class="in">Use hosted URL for actual sends.</p>${note}
       </div>`;
     } else if(fd.t==='widthbtns'){
       const btns=['25','50','75','100'].map(w=>`<button class="bs${val===w?' on':''}" onclick="updBk('${bk.id}','${fd.k}','${w}')">${w}%</button>`).join('');
-      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div></div>`;
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div>${note}</div>`;
     } else if(fd.t==='alignbtns'){
       const btns=['left','center','right'].map(a=>`<button class="bs${val===a?' on':''}" onclick="updBk('${bk.id}','${fd.k}','${a}')">${a.charAt(0).toUpperCase()+a.slice(1)}</button>`).join('');
-      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div></div>`;
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div>${note}</div>`;
     } else if(fd.t==='select'){
       h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
         <select class="fi" onchange="updBk('${bk.id}','${fd.k}',this.value)">
           ${(fd.opts||[]).map(o=>`<option value="${o}"${val===o?' selected':''}>${o.charAt(0).toUpperCase()+o.slice(1)}</option>`).join('')}
-        </select></div>`;
+        </select>${note}</div>`;
     } else if(fd.t==='textarea'){
-      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><textarea class="fi" oninput="updBk('${bk.id}','${fd.k}',this.value)">${et(val)}</textarea></div>`;
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><textarea class="fi" oninput="updBk('${bk.id}','${fd.k}',this.value)">${et(val)}</textarea>${note}</div>`;
     } else if(fd.t==='color'){
       const sw=BRAND.map(c=>`<div class="sw" style="background:${c.h};" title="${c.n}" onclick="updBk('${bk.id}','${fd.k}','${c.h}')"></div>`).join('');
       h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
         <div class="cr"><input type="color" value="${eh(val)||'#ffffff'}" oninput="updBkCol('${bk.id}','${fd.k}',this)">
         <input type="text" class="fi" style="flex:1;" value="${eh(val)}" oninput="updBkColTxt('${bk.id}','${fd.k}',this)"></div>
-        <div class="swr">${sw}</div></div>`;
+        <div class="swr">${sw}</div>${note}</div>`;
     } else {
       h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
-        <input type="text" class="fi" value="${eh(val)}" oninput="updBk('${bk.id}','${fd.k}',this.value)"></div>`;
+        <input type="text" class="fi" value="${eh(val)}" oninput="updBk('${bk.id}','${fd.k}',this.value)">${note}</div>`;
     }
   });
   return h;
