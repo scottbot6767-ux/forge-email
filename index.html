@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Email Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #131313;
+      --panel: #181818;
+      --border: #222;
+      --border-light: #2a2a2a;
+      --accent: #D4FF00;
+      --text: #e8e8e8;
+      --text-dim: #666;
+      --text-muted: #444;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ─── TOOLBAR ─────────────────────────────────────────────────────── */
+    .toolbar {
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      gap: 12px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    .wordmark {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-right: 6px;
+      user-select: none;
+    }
+
+    .pipe {
+      width: 1px;
+      height: 20px;
+      background: var(--border-light);
+      flex-shrink: 0;
+    }
+
+    .mode-pill {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .mode-pill button {
+      padding: 5px 14px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .mode-pill button.active {
+      background: var(--accent);
+      color: #000;
+      font-weight: 500;
+    }
+
+    .tpl-select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .tpl-select option { background: #1a1a1a; }
+
+    .spacer { flex: 1; }
+
+    .copy-toast {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transition: opacity 0.25s;
+      pointer-events: none;
+    }
+
+    .copy-toast.show { opacity: 1; }
+
+    .btn-copy {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 8px 20px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn-copy:hover { opacity: 0.88; }
+    .btn-copy:active { transform: scale(0.98); }
+
+    /* ─── LAYOUT ──────────────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      height: calc(100vh - 52px);
+    }
+
+    /* ─── SIDEBAR ─────────────────────────────────────────────────────── */
+    .sidebar {
+      width: 272px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-scroll {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar { width: 3px; }
+    .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; }
+
+    .sidebar-heading {
+      padding: 11px 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .field-wrap {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .field-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      padding: 6px 9px;
+      border-radius: 2px;
+      transition: border-color 0.12s;
+      resize: vertical;
+    }
+
+    .field-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea.field-input { min-height: 64px; }
+
+    .color-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 32px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      background: none;
+      padding: 1px;
+      flex-shrink: 0;
+    }
+
+    /* Merge Tags */
+    .tags-wrap {
+      padding: 12px 14px;
+    }
+
+    .tags-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .tags-group-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #3a3a3a;
+      margin: 10px 0 5px;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tag-chip {
+      background: var(--bg);
+      border: 1px solid #2a2a2a;
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      padding: 3px 6px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s;
+      white-space: nowrap;
+    }
+
+    .tag-chip:hover {
+      border-color: var(--accent);
+      background: rgba(212, 255, 0, 0.06);
+    }
+
+    /* ─── PREVIEW AREA ────────────────────────────────────────────────── */
+    .preview-area {
+      flex: 1;
+      background: #1c1c1c;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 24px;
+    }
+
+    .preview-area::-webkit-scrollbar { width: 6px; }
+    .preview-area::-webkit-scrollbar-track { background: #1a1a1a; }
+    .preview-area::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .preview-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      align-self: stretch;
+      margin-bottom: 20px;
+    }
+
+    .preview-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #3a3a3a;
+    }
+
+    .preview-rule {
+      flex: 1;
+      height: 1px;
+      background: #252525;
+    }
+
+    .email-shadow-wrap {
+      width: 600px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    #preview-frame {
+      width: 600px;
+      border: none;
+      display: block;
+      min-height: 400px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="wordmark">Forge</div>
+  <div class="pipe"></div>
+  <div class="mode-pill">
+    <button class="active" onclick="setMode('marketing')">Marketing</button>
+    <button onclick="setMode('sales')">Sales</button>
+  </div>
+  <select class="tpl-select" id="tpl-select" onchange="setTemplate(this.value)"></select>
+  <div class="spacer"></div>
+  <span class="copy-toast" id="toast">HTML copied</span>
+  <button class="btn-copy" onclick="copyHTML()">Copy HTML</button>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-scroll" id="sidebar-scroll"></div>
+  </div>
+  <div class="preview-area">
+    <div class="preview-meta">
+      <span class="preview-label">Live Preview</span>
+      <div class="preview-rule"></div>
+      <span class="preview-label">600px</span>
+    </div>
+    <div class="email-shadow-wrap">
+      <iframe id="preview-frame" srcdoc="" scrolling="no"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════
+let mode = 'marketing';
+let tplKey = '';
+let fields = {};
+
+// ═══════════════════════════════════════════════════════════════════════
+// MERGE TAGS
+// ═══════════════════════════════════════════════════════════════════════
+const MERGE_TAGS = {
+  Contact: [
+    '{{ contact.firstname }}',
+    '{{ contact.lastname }}',
+    '{{ contact.email }}',
+    '{{ contact.company }}',
+    '{{ contact.jobtitle }}',
+    '{{ contact.phone }}',
+  ],
+  Sender: [
+    '{{ sender.firstname }}',
+    '{{ sender.lastname }}',
+    '{{ sender.email }}',
+    '{{ owner.name }}',
+  ],
+  Links: [
+    '{{ unsubscribe_link }}',
+    '{{ view_in_browser_link }}',
+  ],
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// FIELD META
+// ═══════════════════════════════════════════════════════════════════════
+const LABELS = {
+  logo_text: 'Brand / Logo Text',
+  pre_header: 'Preheader (hidden preview text)',
+  issue_label: 'Issue Label',
+  headline: 'Main Headline',
+  body_1: 'Opening Paragraph',
+  body_2: 'Body Paragraph',
+  pull_quote: 'Pull Quote',
+  cta_label: 'CTA Button Text',
+  cta_url: 'CTA URL',
+  footer_co: 'Company Name (Footer)',
+  footer_addr: 'Address (Footer)',
+  color_header: 'Header Background',
+  color_cta: 'Accent / CTA Color',
+  eyebrow: 'Eyebrow Label',
+  hero_headline: 'Hero Headline',
+  hero_sub: 'Hero Subtext',
+  f1_title: 'Feature 1 — Title',
+  f1_desc: 'Feature 1 — Description',
+  f2_title: 'Feature 2 — Title',
+  f2_desc: 'Feature 2 — Description',
+  f3_title: 'Feature 3 — Title',
+  f3_desc: 'Feature 3 — Description',
+  company: 'Company Name',
+  greeting: 'Greeting',
+  p1: 'Paragraph 1',
+  p2: 'Paragraph 2',
+  p3: 'Paragraph / Ask',
+  signoff: 'Sign-Off',
+  sender_name: 'Your Name',
+  sender_title: 'Your Title',
+  sender_email: 'Your Email',
+  ps: 'P.S. Line',
+  context_note: 'Context / Re: Line',
+  ask: 'Closing Ask',
+  color_accent: 'Accent Color',
+};
+
+const TEXTAREA_KEYS = new Set([
+  'body_1','body_2','pull_quote','hero_sub','f1_desc','f2_desc','f3_desc',
+  'p1','p2','p3','ask','ps',
+]);
+
+const COLOR_KEYS = new Set([
+  'color_header','color_cta','color_accent',
+]);
+
+// ═══════════════════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════════════════
+const TEMPLATES = {
+
+  // ──────────────────────────────────────────────────────────────────────
+  // MARKETING
+  // ──────────────────────────────────────────────────────────────────────
+  marketing: {
+
+    dispatch: {
+      label: 'The Dispatch',
+      fields: ['logo_text','pre_header','issue_label','headline','body_1','body_2','pull_quote','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
+      defaults: {
+        logo_text: 'RANKINGS.IO',
+        pre_header: 'Your weekly edge in legal marketing.',
+        issue_label: 'Issue No. 12 — February 2026',
+        headline: 'The one thing your competitors are doing\u00a0that you\u2019re\u00a0not.',
+        body_1: 'Most law firms treat their website like a billboard. Set it, forget it, hope for the best. But the firms outpacing you are doing something different.',
+        body_2: 'They\'re treating their digital presence like a product \u2014 shipping updates, testing ideas, measuring what moves the needle. It\u2019s not glamorous. But it compounds fast.',
+        pull_quote: 'The best SEO strategy isn\u2019t the most complex one. It\u2019s the one that actually gets executed.',
+        cta_label: 'Read the Full Brief \u2192',
+        cta_url: 'https://rankings.io',
+        footer_co: 'Rankings.io',
+        footer_addr: '123 Main St, Salt Lake City, UT 84101',
+        color_header: '#0A0A0A',
+        color_cta: '#C8391A',
+      },
+      render(f) { return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${f.pre_header}</title>
+</head>
+<body style="margin:0;padding:0;background:#EDECE8;font-family:Georgia,'Times New Roman',serif;">
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#EDECE8;">${f.pre_header}</div>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EDECE8;">
+<tr><td align="center" style="padding:28px 16px;">
+<table border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;">
+
+  <!-- HEADER BAR -->
+  <tr><td style="background:${f.color_header};padding:0;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+      <td style="padding:18px 28px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#ffffff;text-transform:uppercase;">${f.logo_text}</td>
+          <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#555;text-transform:uppercase;">${f.issue_label}</td>
+        </tr></table>
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- HERO -->
+  <tr><td style="background:#ffffff;padding:52px 36px 44px;">
+    <p style="margin:0 0 22px 0;font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa;">The Brief</p>
+    <h1 style="margin:0 0 36px 0;font-family:Georgia,'Times New Roman',serif;font-size:40px;line-height:1.18;color:#0a0a0a;font-weight:400;letter-spacing:-0.5px;">${f.headline}</h1>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+      <td style="width:44px;height:3px;background:${f.color_cta};font-size:0;line-height:0;">&nbsp;</td>
+      <td style="height:1px;background:#e4e4e4;font-size:0;line-height:0;">&nbsp;</td>
+    </tr></table>
+  </td></tr>
+
+  <!-- BODY -->
+  <tr><td style="background:#ffffff;padding:0 36px 28px;">
+    <p style="margin:0 0 22px 0;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.8;color:#1c1c1c;">${f.body_1}</p>
+    <p style="margin:0 0 32px 0;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.8;color:#1c1c1c;">${f.body_2}</p>
+    <!-- Pull Quote -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:36px;"><tr>
+      <td style="border-left:4px solid ${f.color_cta};padding:18px 22px;background:#F7F6F2;">
+        <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:19px;line-height:1.6;color:#0a0a0a;font-style:italic;">\u201c${f.pull_quote}\u201d</p>
+      </td>
+    </tr></table>
+    <!-- CTA -->
+    <table border="0" cellpadding="0" cellspacing="0"><tr>
+      <td style="background:${f.color_cta};border-radius:1px;">
+        <a href="${f.cta_url}" style="display:inline-block;padding:15px 30px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">${f.cta_label}</a>
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- FOOTER RULE -->
+  <tr><td style="background:${f.color_header};height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="padding:22px 36px;background:#EDECE8;">
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#aaa;line-height:1.7;">
+      <strong style="color:#888;">${f.footer_co}</strong><br>
+      ${f.footer_addr}<br><br>
+      <a href="{{ unsubscribe_link }}" style="color:#aaa;text-decoration:underline;">Unsubscribe</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a href="{{ view_in_browser_link }}" style="color:#aaa;text-decoration:underline;">View in browser</a>
+    </p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`; }
+    },
+
+    spotlight: {
+      label: 'Feature Spotlight',
+      fields: ['logo_text','pre_header','eyebrow','hero_headline','hero_sub','f1_title','f1_desc','f2_title','f2_desc','f3_title','f3_desc','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
+      defaults: {
+        logo_text: 'RANKINGS.IO',
+        pre_header: 'We rebuilt rank tracking from scratch. Here\'s what changed.',
+        eyebrow: 'New — Rank Intelligence',
+        hero_headline: 'Track rankings that actually mean something.',
+        hero_sub: 'We rebuilt our rank tracking engine from the ground up. More data points, faster updates, and a view of what\'s moving \u2014 and more importantly, what\u2019s not. Available to all clients starting today.',
+        f1_title: 'Daily position updates',
+        f1_desc: 'See how you moved overnight, not just weekly snapshots. Know before your morning coffee.',
+        f2_title: 'Competitor delta view',
+        f2_desc: 'Get alerted when a competitor jumps past you on a term you care about \u2014 before it impacts your leads.',
+        f3_title: 'Local vs. national splits',
+        f3_desc: 'See performance in your city, your state, and every market you\u2019re trying to win.',
+        cta_label: 'See It in Action',
+        cta_url: 'https://rankings.io',
+        footer_co: 'Rankings.io',
+        footer_addr: '123 Main St, Salt Lake City, UT 84101',
+        color_header: '#0A0A0A',
+        color_cta: '#1D4ED8',
+      },
+      render(f) { return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${f.pre_header}</title>
+</head>
+<body style="margin:0;padding:0;background:#F2F2F2;font-family:Arial,sans-serif;">
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#F2F2F2;">${f.pre_header}</div>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#F2F2F2;">
+<tr><td align="center" style="padding:28px 16px;">
+<table border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;">
+
+  <!-- TOP STRIPE -->
+  <tr><td style="background:${f.color_header};height:4px;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+  <!-- HEADER -->
+  <tr><td style="background:#ffffff;padding:22px 32px 24px;border-bottom:1px solid #eee;">
+    <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${f.color_header};text-transform:uppercase;">${f.logo_text}</p>
+  </td></tr>
+
+  <!-- HERO -->
+  <tr><td style="background:#ffffff;padding:44px 32px 36px;">
+    <p style="margin:0 0 14px 0;font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:${f.color_cta};">${f.eyebrow}</p>
+    <h1 style="margin:0 0 22px 0;font-family:'Arial Black',Arial,sans-serif;font-size:34px;line-height:1.18;color:#0a0a0a;font-weight:900;letter-spacing:-0.5px;">${f.hero_headline}</h1>
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:16px;line-height:1.75;color:#444;">${f.hero_sub}</p>
+  </td></tr>
+
+  <!-- DIVIDER -->
+  <tr><td style="background:#ffffff;padding:0 32px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:#eee;font-size:0;">&nbsp;</td></tr></table></td></tr>
+
+  <!-- FEATURES -->
+  <tr><td style="background:#ffffff;padding:32px 32px 40px;">
+
+    <!-- F1 -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:22px;"><tr>
+      <td valign="top" style="width:4px;background:${f.color_cta};border-radius:2px;font-size:0;">&nbsp;</td>
+      <td valign="top" style="padding-left:18px;">
+        <p style="margin:0 0 5px 0;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f.f1_title}</p>
+        <p style="margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:1.65;color:#666;">${f.f1_desc}</p>
+      </td>
+    </tr></table>
+
+    <!-- F2 -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:22px;"><tr>
+      <td valign="top" style="width:4px;background:${f.color_cta};border-radius:2px;font-size:0;">&nbsp;</td>
+      <td valign="top" style="padding-left:18px;">
+        <p style="margin:0 0 5px 0;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f.f2_title}</p>
+        <p style="margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:1.65;color:#666;">${f.f2_desc}</p>
+      </td>
+    </tr></table>
+
+    <!-- F3 -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:36px;"><tr>
+      <td valign="top" style="width:4px;background:${f.color_cta};border-radius:2px;font-size:0;">&nbsp;</td>
+      <td valign="top" style="padding-left:18px;">
+        <p style="margin:0 0 5px 0;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f.f3_title}</p>
+        <p style="margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:1.65;color:#666;">${f.f3_desc}</p>
+      </td>
+    </tr></table>
+
+    <!-- CTA -->
+    <table border="0" cellpadding="0" cellspacing="0"><tr>
+      <td style="background:${f.color_cta};">
+        <a href="${f.cta_url}" style="display:inline-block;padding:15px 30px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">${f.cta_label}</a>
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- BOTTOM STRIPE -->
+  <tr><td style="background:${f.color_header};height:3px;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="padding:20px 32px;background:#F2F2F2;">
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#aaa;line-height:1.7;">
+      <strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+      <a href="{{ unsubscribe_link }}" style="color:#aaa;text-decoration:underline;">Unsubscribe</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;<a href="{{ view_in_browser_link }}" style="color:#aaa;text-decoration:underline;">View in browser</a>
+    </p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`; }
+    },
+
+  },
+
+  // ──────────────────────────────────────────────────────────────────────
+  // SALES
+  // ──────────────────────────────────────────────────────────────────────
+  sales: {
+
+    outreach: {
+      label: 'Personal Outreach',
+      fields: ['company','greeting','p1','p2','p3','signoff','sender_name','sender_title','sender_email','ps','color_accent'],
+      defaults: {
+        company: 'Rankings.io',
+        greeting: 'Hi {{ contact.firstname }},',
+        p1: 'I came across {{ contact.company }} and noticed you\u2019ve been building a real presence in your market. Most law firms your size are leaving a significant amount of organic search traffic on the table \u2014 not because they\u2019re doing anything wrong, but because the opportunity is easy to miss.',
+        p2: 'We work specifically with law firms on SEO and digital growth. I\u2019d love to share a quick look at where you currently rank vs. where you could be \u2014 no pitch, just useful data.',
+        p3: 'Worth a 20-minute call this week?',
+        signoff: 'Best,',
+        sender_name: '{{ sender.firstname }} {{ sender.lastname }}',
+        sender_title: 'Client Growth, Rankings.io',
+        sender_email: '{{ sender.email }}',
+        ps: 'P.S. I put together a quick snapshot of your site\u2019s current search visibility \u2014 happy to send it over if useful.',
+        color_accent: '#0A0A0A',
+      },
+      render(f) { return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+</head>
+<body style="margin:0;padding:0;background:#EDECEA;font-family:Georgia,'Times New Roman',serif;">
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EDECEA;">
+<tr><td align="center" style="padding:36px 16px;">
+<table border="0" cellpadding="0" cellspacing="0" width="560" style="max-width:560px;">
+
+  <!-- COMPANY MARK -->
+  <tr><td style="padding-bottom:20px;">
+    <table border="0" cellpadding="0" cellspacing="0"><tr>
+      <td style="width:28px;height:2px;background:${f.color_accent};font-size:0;">&nbsp;</td>
+      <td style="width:6px;height:2px;background:#ccc;font-size:0;">&nbsp;</td>
+      <td style="width:6px;height:2px;background:#ddd;font-size:0;">&nbsp;</td>
+    </tr></table>
+  </td></tr>
+
+  <!-- BODY -->
+  <tr><td style="background:#ffffff;padding:40px 40px 36px;border-top:2px solid ${f.color_accent};">
+    <p style="margin:0 0 28px 0;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${f.company}</p>
+    <p style="margin:0 0 20px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.greeting}</p>
+    <p style="margin:0 0 20px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.p1}</p>
+    <p style="margin:0 0 20px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.p2}</p>
+    <p style="margin:0 0 36px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.p3}</p>
+    <p style="margin:0 0 6px 0;font-family:Georgia,serif;font-size:16px;color:#1a1a1a;">${f.signoff}</p>
+    <p style="margin:0 0 2px 0;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#0a0a0a;">${f.sender_name}</p>
+    <p style="margin:0 0 2px 0;font-family:Arial,sans-serif;font-size:12px;color:#888;">${f.sender_title}</p>
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#888;">${f.sender_email}</p>
+  </td></tr>
+
+  <!-- PS -->
+  <tr><td style="background:#F4F3EF;padding:18px 40px;border-top:1px solid #E4E2DC;">
+    <p style="margin:0;font-family:Georgia,serif;font-size:13px;line-height:1.7;color:#777;font-style:italic;">${f.ps}</p>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="padding:18px 0 0;">
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;line-height:1.7;">
+      You received this as a business contact. <a href="{{ unsubscribe_link }}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a>
+    </p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`; }
+    },
+
+    followup: {
+      label: 'Follow-Up',
+      fields: ['company','greeting','context_note','p1','p2','ask','signoff','sender_name','sender_title','color_accent'],
+      defaults: {
+        company: 'Rankings.io',
+        greeting: 'Hey {{ contact.firstname }} \u2014',
+        context_note: 'Re: your firm\u2019s search visibility',
+        p1: 'I know inboxes are brutal, so I\u2019ll keep this short: I genuinely think there\u2019s an opportunity here worth 20 minutes of your time.',
+        p2: 'We\u2019ve helped firms like yours go from page 3 to page 1 for their most valuable search terms \u2014 and the compounding effect on inbound is significant.',
+        ask: 'If now\u2019s not the right time, just let me know and I\u2019ll follow up in a few months. No pressure either way.',
+        signoff: '\u2014',
+        sender_name: '{{ sender.firstname }}',
+        sender_title: 'Rankings.io',
+        color_accent: '#0A0A0A',
+      },
+      render(f) { return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:Georgia,'Times New Roman',serif;">
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#ffffff;">
+<tr><td align="center" style="padding:48px 16px;">
+<table border="0" cellpadding="0" cellspacing="0" width="520" style="max-width:520px;">
+
+  <!-- TOP RULE -->
+  <tr><td style="padding-bottom:36px;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:#e8e8e8;font-size:0;">&nbsp;</td></tr></table>
+  </td></tr>
+
+  <!-- COMPANY -->
+  <tr><td style="padding-bottom:28px;">
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${f.company}</p>
+  </td></tr>
+
+  <!-- CONTEXT NOTE -->
+  <tr><td style="padding-bottom:28px;">
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#bbb;font-style:italic;">${f.context_note}</p>
+  </td></tr>
+
+  <!-- BODY -->
+  <tr><td>
+    <p style="margin:0 0 22px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.greeting}</p>
+    <p style="margin:0 0 22px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.p1}</p>
+    <p style="margin:0 0 22px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.p2}</p>
+    <p style="margin:0 0 40px 0;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.ask}</p>
+  </td></tr>
+
+  <!-- SIGN OFF -->
+  <tr><td style="border-top:1px solid #e8e8e8;padding-top:28px;">
+    <p style="margin:0 0 8px 0;font-family:Georgia,serif;font-size:16px;color:#111;">${f.signoff}</p>
+    <p style="margin:0 0 2px 0;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#111;">${f.sender_name}</p>
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#bbb;">${f.sender_title}</p>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="padding-top:36px;">
+    <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#ccc;">
+      <a href="{{ unsubscribe_link }}" style="color:#ccc;text-decoration:none;">Unsubscribe</a>
+    </p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`; }
+    },
+
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════
+function init() {
+  applyMode('marketing');
+}
+
+function setMode(m) {
+  if (mode === m) return;
+  mode = m;
+  document.querySelectorAll('.mode-pill button').forEach((b, i) => {
+    b.classList.toggle('active', (m === 'marketing' && i === 0) || (m === 'sales' && i === 1));
+  });
+  applyMode(m);
+}
+
+function applyMode(m) {
+  const sel = document.getElementById('tpl-select');
+  sel.innerHTML = '';
+  Object.entries(TEMPLATES[m]).forEach(([k, t]) => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = t.label; sel.appendChild(o);
+  });
+  tplKey = Object.keys(TEMPLATES[m])[0];
+  fields = { ...TEMPLATES[m][tplKey].defaults };
+  buildSidebar();
+  renderPreview();
+}
+
+function setTemplate(k) {
+  tplKey = k;
+  fields = { ...TEMPLATES[mode][tplKey].defaults };
+  buildSidebar();
+  renderPreview();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════════════════════════
+function buildSidebar() {
+  const tpl = TEMPLATES[mode][tplKey];
+  let html = `<div class="sidebar-heading">Content Fields</div>`;
+
+  tpl.fields.forEach(k => {
+    const label = LABELS[k] || k;
+    const val = fields[k] || '';
+
+    if (COLOR_KEYS.has(k)) {
+      html += `<div class="field-wrap">
+        <div class="field-label">${label}</div>
+        <div class="color-row">
+          <input type="color" value="${escH(val)}" oninput="syncColor('${k}',this)">
+          <input type="text" class="field-input" style="flex:1;" value="${escH(val)}" oninput="syncText('${k}',this)">
+        </div>
+      </div>`;
+    } else if (TEXTAREA_KEYS.has(k)) {
+      html += `<div class="field-wrap">
+        <div class="field-label">${label}</div>
+        <textarea class="field-input" oninput="upd('${k}',this.value)">${escT(val)}</textarea>
+      </div>`;
+    } else {
+      html += `<div class="field-wrap">
+        <div class="field-label">${label}</div>
+        <input type="text" class="field-input" value="${escH(val)}" oninput="upd('${k}',this.value)">
+      </div>`;
+    }
+  });
+
+  html += `<div class="sidebar-heading">HubSpot Merge Tags</div>
+  <div class="tags-wrap">
+    <p class="tags-note">Click any token to copy it, then paste it into a field above.</p>`;
+
+  Object.entries(MERGE_TAGS).forEach(([group, tags]) => {
+    html += `<p class="tags-group-label">${group}</p><div class="tags-row">`;
+    tags.forEach(t => {
+      html += `<span class="tag-chip" onclick="copyTag('${t}')">${t}</span>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('sidebar-scroll').innerHTML = html;
+}
+
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escT(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function upd(k, v) { fields[k] = v; renderPreview(); }
+
+function syncColor(k, colorPicker) {
+  fields[k] = colorPicker.value;
+  const row = colorPicker.parentNode;
+  row.querySelector('input[type="text"]').value = colorPicker.value;
+  renderPreview();
+}
+
+function syncText(k, textInput) {
+  const v = textInput.value;
+  fields[k] = v;
+  if (/^#[0-9A-Fa-f]{6}$/.test(v)) {
+    textInput.parentNode.querySelector('input[type="color"]').value = v;
+  }
+  renderPreview();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// PREVIEW
+// ═══════════════════════════════════════════════════════════════════════
+function renderPreview() {
+  const html = TEMPLATES[mode][tplKey].render(fields);
+  const fr = document.getElementById('preview-frame');
+  fr.srcdoc = html;
+  fr.onload = () => {
+    try {
+      const h = fr.contentDocument.documentElement.scrollHeight;
+      fr.style.height = Math.max(h, 400) + 'px';
+    } catch(e) { fr.style.height = '700px'; }
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EXPORT + COPY
+// ═══════════════════════════════════════════════════════════════════════
+function copyHTML() {
+  const html = TEMPLATES[mode][tplKey].render(fields);
+  navigator.clipboard.writeText(html).then(() => showToast('HTML copied'));
+}
+
+function copyTag(tag) {
+  navigator.clipboard.writeText(tag).then(() => showToast('Token copied'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════════════════════════
+init();
+</script>
+
+</body>
+</html>
