@@ -8,999 +8,1078 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#0c0c0c;--surface:#131313;--border:#222;--border2:#2a2a2a;--accent:#D4FF00;--text:#e8e8e8;--dim:#666;--muted:#444}
-    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow:hidden}
+    :root{--bg:#0c0c0c;--sf:#131313;--bd:#222;--bd2:#2a2a2a;--ac:#D4FF00;--tx:#e8e8e8;--dm:#666;--mt:#444}
+    html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Syne',sans-serif;overflow:hidden}
 
-    /* TOOLBAR */
-    .toolbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0;z-index:10;position:relative}
-    .wordmark{font-size:15px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--accent);user-select:none}
-    .pipe{width:1px;height:20px;background:var(--border2);flex-shrink:0}
-    .mode-pill{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-    .mode-pill button{padding:5px 14px;background:none;border:none;color:var(--dim);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .12s}
-    .mode-pill button.active{background:var(--accent);color:#000;font-weight:500}
-    .tpl-select{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;border-radius:3px;cursor:pointer;text-transform:uppercase;max-width:200px}
-    .tpl-select option{background:#1a1a1a}
-    .spacer{flex:1}
-    .toast{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);opacity:0;transition:opacity .25s;pointer-events:none}
-    .toast.show{opacity:1}
-    .btn-copy{background:var(--accent);color:#000;border:none;padding:8px 20px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:opacity .15s}
-    .btn-copy:hover{opacity:.88}
+    .toolbar{height:52px;background:var(--sf);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0;z-index:10}
+    .wm{font-size:15px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--ac);user-select:none}
+    .pipe{width:1px;height:20px;background:var(--bd2);flex-shrink:0}
+    .mp{display:flex;background:var(--bg);border:1px solid var(--bd);border-radius:3px;overflow:hidden}
+    .mp button{padding:5px 14px;background:none;border:none;color:var(--dm);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .12s}
+    .mp button.on{background:var(--ac);color:#000;font-weight:500}
+    .ts{background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;border-radius:3px;cursor:pointer;text-transform:uppercase;max-width:180px}
+    .ts option{background:#1a1a1a}
+    .sp{flex:1}
+    .tst{font-family:'DM Mono',monospace;font-size:10px;color:var(--ac);opacity:0;transition:opacity .25s;pointer-events:none}
+    .tst.show{opacity:1}
+    .bcp{background:var(--ac);color:#000;border:none;padding:8px 20px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px}
+    .bcp:hover{opacity:.88}
 
-    /* LAYOUT */
     .layout{display:flex;height:calc(100vh - 52px)}
 
     /* SIDEBAR */
-    .sidebar{width:280px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
-    .sb-scroll{overflow-y:auto;flex:1}
-    .sb-scroll::-webkit-scrollbar{width:3px}
-    .sb-scroll::-webkit-scrollbar-thumb{background:#2a2a2a}
-    .sb-head{padding:11px 16px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
-    .fw{padding:10px 14px;border-bottom:1px solid var(--border)}
-    .fl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:var(--dim);text-transform:uppercase;margin-bottom:5px}
-    .fi{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;line-height:1.5;padding:6px 9px;border-radius:2px;transition:border-color .12s;resize:vertical}
-    .fi:focus{outline:none;border-color:var(--accent)}
-    textarea.fi{min-height:60px}
-    .color-row{display:flex;gap:6px;align-items:center}
-    input[type="color"]{width:32px;height:28px;border:1px solid var(--border);border-radius:2px;cursor:pointer;background:none;padding:1px;flex-shrink:0}
+    .sidebar{width:290px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+    .sbs{overflow-y:auto;flex:1}
+    .sbs::-webkit-scrollbar{width:3px}
+    .sbs::-webkit-scrollbar-thumb{background:#2a2a2a}
+    .sh{padding:10px 16px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--mt);background:var(--sf);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:2}
 
-    /* IMAGE ZONE */
-    .iz{border:1px dashed #333;border-radius:3px;cursor:pointer;transition:border-color .15s,background .15s;overflow:hidden;position:relative;margin-bottom:6px;min-height:68px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-    .iz.drag-over{border-color:var(--accent);background:rgba(212,255,0,.04)}
-    .iz.has-img{border-style:solid;border-color:#2a2a2a}
-    .iz-hint{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px;pointer-events:none}
-    .iz-icon{width:22px;height:22px;opacity:.22}
-    .iz-txt{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;line-height:1.4}
-    .iz-tw{width:100%;position:relative}
-    .iz-thumb{width:100%;display:block;max-height:110px;object-fit:cover}
-    .iz-rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.75);border:1px solid #444;color:#ccc;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;cursor:pointer}
-    .iz-rm:hover{background:rgba(0,0,0,.95);color:#fff}
-    .img-note{font-family:'DM Mono',monospace;font-size:9px;color:#3a3a3a;line-height:1.5;margin-top:4px}
-
-    /* IMAGE CONTROLS */
-    .ic{margin-top:7px;display:flex;flex-direction:column;gap:5px}
-    .ic-row{display:flex;align-items:center;gap:6px}
-    .ic-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;width:42px;flex-shrink:0}
-    .btn-grp{display:flex;gap:3px}
-    .bseg{padding:3px 7px;background:var(--bg);border:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:9px;border-radius:2px;cursor:pointer;transition:all .1s;white-space:nowrap}
-    .bseg:hover{border-color:#444;color:var(--text)}
-    .bseg.on{background:var(--accent);border-color:var(--accent);color:#000;font-weight:500}
-    .ic-sel{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:2px;cursor:pointer}
-    .ic-sel option{background:#1a1a1a}
-    .ic-inp{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:2px}
-    .ic-inp:focus{outline:none;border-color:var(--accent)}
-
-    /* SWATCHES */
-    .sw-row{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+    /* fields */
+    .fw{padding:9px 14px;border-bottom:1px solid var(--bd)}
+    .fl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:var(--dm);text-transform:uppercase;margin-bottom:4px}
+    .fi{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:11px;line-height:1.5;padding:6px 9px;border-radius:2px;transition:border-color .12s;resize:vertical}
+    .fi:focus{outline:none;border-color:var(--ac)}
+    textarea.fi{min-height:58px}
+    .cr{display:flex;gap:6px;align-items:center}
+    input[type="color"]{width:32px;height:28px;border:1px solid var(--bd);border-radius:2px;cursor:pointer;background:none;padding:1px;flex-shrink:0}
+    .swr{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
     .sw{width:20px;height:20px;border-radius:2px;cursor:pointer;border:1px solid rgba(255,255,255,.08);flex-shrink:0;transition:transform .1s,box-shadow .1s}
     .sw:hover{transform:scale(1.2);box-shadow:0 2px 8px rgba(0,0,0,.5);z-index:1}
 
+    /* image zone */
+    .iz{border:1px dashed #333;border-radius:3px;cursor:pointer;transition:all .15s;overflow:hidden;position:relative;margin-bottom:5px;min-height:60px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+    .iz.drag-over{border-color:var(--ac);background:rgba(212,255,0,.04)}
+    .iz.hi{border-style:solid;border-color:#2a2a2a}
+    .iz-hint{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px;pointer-events:none}
+    .iz-icon{width:20px;height:20px;opacity:.2}
+    .iz-txt{font-family:'DM Mono',monospace;font-size:9px;color:var(--mt);text-align:center;line-height:1.3}
+    .iz-tw{width:100%;position:relative}
+    .iz-th{width:100%;display:block;max-height:100px;object-fit:cover}
+    .iz-rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.8);border:1px solid #444;color:#ccc;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;cursor:pointer}
+    .in{font-family:'DM Mono',monospace;font-size:9px;color:#3a3a3a;line-height:1.4;margin-top:3px}
+
+    /* image controls */
+    .ic{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+    .ir{display:flex;align-items:center;gap:5px}
+    .il{font-family:'DM Mono',monospace;font-size:8px;color:var(--mt);text-transform:uppercase;width:40px;flex-shrink:0}
+    .bg{display:flex;gap:3px}
+    .bs{padding:3px 6px;background:var(--bg);border:1px solid var(--bd);color:var(--dm);font-family:'DM Mono',monospace;font-size:9px;border-radius:2px;cursor:pointer;transition:all .1s;white-space:nowrap}
+    .bs:hover{border-color:#444;color:var(--tx)}
+    .bs.on{background:var(--ac);border-color:var(--ac);color:#000;font-weight:500}
+    .is{flex:1;background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:2px;cursor:pointer}
+    .is option{background:#1a1a1a}
+    .ii{flex:1;background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:2px}
+    .ii:focus{outline:none;border-color:var(--ac)}
+
+    /* BLOCKS */
+    .bk-list{padding:8px 14px}
+    .bk{border:1px solid var(--bd2);border-radius:3px;margin-bottom:6px;overflow:hidden;background:var(--bg)}
+    .bk-hd{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer;user-select:none;transition:background .1s}
+    .bk-hd:hover{background:rgba(255,255,255,.03)}
+    .bk-ico{width:18px;height:18px;background:var(--bd2);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:8px;color:var(--dm);flex-shrink:0}
+    .bk-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--tx);flex:1;letter-spacing:.3px}
+    .bk-acts{display:flex;gap:3px;flex-shrink:0}
+    .bk-btn{background:none;border:1px solid var(--bd2);color:var(--dm);font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;cursor:pointer;transition:all .1s}
+    .bk-btn:hover{border-color:#444;color:var(--tx)}
+    .bk-btn.del:hover{border-color:#c0392b;color:#c0392b}
+    .bk-body{border-top:1px solid var(--bd2);display:none}
+    .bk-body.open{display:block}
+    .bk-field{padding:8px 10px;border-bottom:1px solid #1a1a1a}
+    .bk-field:last-child{border-bottom:none}
+
+    /* ADD BLOCK */
+    .add-bk-wrap{padding:0 14px 12px}
+    .add-bk-btn{width:100%;padding:8px;background:none;border:1px dashed var(--bd2);color:var(--dm);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .12s}
+    .add-bk-btn:hover{border-color:var(--ac);color:var(--ac)}
+    .block-picker{display:none;border:1px solid var(--bd2);border-radius:3px;background:var(--sf);margin-top:6px;overflow:hidden}
+    .block-picker.open{display:block}
+    .bp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd)}
+    .bp-item{padding:8px 10px;background:var(--bg);cursor:pointer;transition:background .1s}
+    .bp-item:hover{background:rgba(212,255,0,.06)}
+    .bp-name{font-family:'DM Mono',monospace;font-size:10px;color:var(--tx);margin-bottom:1px}
+    .bp-sub{font-family:'DM Mono',monospace;font-size:8px;color:var(--mt)}
+
     /* MERGE TAGS */
-    .tags-wrap{padding:10px 14px}
-    .tags-note{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-    .tg-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a3a;margin:8px 0 4px}
-    .tg-row{display:flex;flex-wrap:wrap;gap:4px}
-    .tc{background:var(--bg);border:1px solid #2a2a2a;color:var(--accent);font-family:'DM Mono',monospace;font-size:8px;padding:3px 6px;border-radius:2px;cursor:pointer;transition:border-color .12s,background .12s;white-space:nowrap}
-    .tc:hover{border-color:var(--accent);background:rgba(212,255,0,.06)}
+    .tw{padding:10px 14px}
+    .tn{font-family:'DM Mono',monospace;font-size:9px;color:var(--mt);line-height:1.6;margin-bottom:7px}
+    .tg{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#3a3a3a;margin:7px 0 4px}
+    .tr_{display:flex;flex-wrap:wrap;gap:4px}
+    .tc{background:var(--bg);border:1px solid #2a2a2a;color:var(--ac);font-family:'DM Mono',monospace;font-size:8px;padding:3px 6px;border-radius:2px;cursor:pointer;transition:all .12s;white-space:nowrap}
+    .tc:hover{border-color:var(--ac);background:rgba(212,255,0,.06)}
 
     /* PREVIEW */
-    .preview-area{flex:1;background:#1c1c1c;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:28px 24px}
-    .preview-area::-webkit-scrollbar{width:6px}
-    .preview-area::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+    .pa{flex:1;background:#1c1c1c;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:28px 24px}
+    .pa::-webkit-scrollbar{width:6px}
+    .pa::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
     .pm{display:flex;align-items:center;gap:10px;align-self:stretch;margin-bottom:18px}
     .pl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#3a3a3a}
-    .pr{flex:1;height:1px;background:#252525}
+    .prl{flex:1;height:1px;background:#252525}
     .esw{width:600px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 4px 16px rgba(0,0,0,.4)}
     #pf{width:600px;border:none;display:block;min-height:400px}
-    #fi{display:none}
+    #fui{display:none}
   </style>
 </head>
 <body>
-<input type="file" id="fi" accept="image/*">
+<input type="file" id="fui" accept="image/*">
 
 <div class="toolbar">
-  <div class="wordmark">Forge</div>
+  <div class="wm">Forge</div>
   <div class="pipe"></div>
-  <div class="mode-pill">
-    <button class="active" onclick="setMode('marketing')">Marketing</button>
+  <div class="mp">
+    <button class="on" onclick="setMode('marketing')">Marketing</button>
     <button onclick="setMode('sales')">Sales</button>
   </div>
-  <select class="tpl-select" id="ts" onchange="setTpl(this.value)"></select>
-  <div class="spacer"></div>
-  <span class="toast" id="toast"></span>
-  <button class="btn-copy" onclick="copyHTML()">Copy HTML</button>
+  <select class="ts" id="ts" onchange="setTpl(this.value)"></select>
+  <div class="sp"></div>
+  <span class="tst" id="tst"></span>
+  <button class="bcp" onclick="copyHTML()">Copy HTML</button>
 </div>
 
 <div class="layout">
-  <div class="sidebar"><div class="sb-scroll" id="sb"></div></div>
-  <div class="preview-area">
-    <div class="pm"><span class="pl">Live Preview</span><div class="pr"></div><span class="pl">600px</span></div>
+  <div class="sidebar"><div class="sbs" id="sb"></div></div>
+  <div class="pa">
+    <div class="pm"><span class="pl">Live Preview</span><div class="prl"></div><span class="pl">600px</span></div>
     <div class="esw"><iframe id="pf" srcdoc="" scrolling="no"></iframe></div>
   </div>
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────────────────────────
-let mode='marketing', tplKey='', fields={}, pendingImg=null;
+// ── STATE ────────────────────────────────────────────────────────────────────
+let mode='marketing', tplKey='', ff={}, blocks=[], pendingImg=null, pendingImgBk=null;
+let expandedBlks=new Set();
+let showPicker=false;
 
-// ─── CONSTANTS ───────────────────────────────────────────────────────────────
-const MERGE_TAGS={
-  Contact:['{{ contact.firstname }}','{{ contact.lastname }}','{{ contact.email }}','{{ contact.company }}','{{ contact.jobtitle }}'],
-  Sender: ['{{ sender.firstname }}','{{ sender.lastname }}','{{ sender.email }}','{{ owner.name }}'],
-  Links:  ['{{ unsubscribe_link }}','{{ view_in_browser_link }}'],
-};
-
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
 const BRAND=[
   {n:'Tuxedo',h:'#282828'},{n:'Suede',h:'#fcfaec'},{n:'Pearl',h:'#ffffff'},
   {n:'Sky',h:'#3a93cf'},{n:'Midnight',h:'#14364d'},{n:'Flax',h:'#eedc82'},{n:'Chartreuse',h:'#c6e005'},
 ];
+const MERGE={
+  Contact:['{{ contact.firstname }}','{{ contact.lastname }}','{{ contact.email }}','{{ contact.company }}','{{ contact.jobtitle }}'],
+  Sender:['{{ sender.firstname }}','{{ sender.lastname }}','{{ sender.email }}','{{ owner.name }}'],
+  Links:['{{ unsubscribe_link }}','{{ view_in_browser_link }}'],
+};
 
-const LABELS={
-  logo_text:'Brand / Logo',pre_header:'Preheader Text',issue_label:'Issue Label',headline:'Headline',
-  body_1:'Paragraph 1',body_2:'Paragraph 2',pull_quote:'Pull Quote',
-  cta_label:'CTA Button Text',cta_url:'CTA URL',footer_co:'Footer Company',footer_addr:'Footer Address',
+// ── BLOCK DEFINITIONS ────────────────────────────────────────────────────────
+const BD={
+  heading:{
+    label:'Heading', icon:'H',
+    defaults:{text:'Your heading here',size:'large',align:'left'},
+    fieldDefs:[
+      {k:'text',l:'Text',t:'input'},
+      {k:'size',l:'Size',t:'select',opts:['large','medium','small']},
+      {k:'align',l:'Align',t:'select',opts:['left','center','right']},
+    ],
+    render(f,frame){
+      const sz={large:'36px',medium:'26px',small:'20px'}[f.size]||'36px';
+      const wt={large:'400',medium:'700',small:'700'}[f.size]||'400';
+      const ff_={large:"Georgia,'Times New Roman',serif",medium:'Arial,sans-serif',small:'Arial,sans-serif'}[f.size]||"Georgia,serif";
+      return `<tr><td style="background:#ffffff;padding:32px 36px 8px;text-align:${f.align||'left'};">
+        <h2 style="margin:0;font-family:${ff_};font-size:${sz};line-height:1.2;color:#0a0a0a;font-weight:${wt};">${f.text}</h2>
+      </td></tr>`;
+    }
+  },
+  text:{
+    label:'Text', icon:'P',
+    defaults:{text:'Your paragraph text goes here. Write something compelling.'},
+    fieldDefs:[{k:'text',l:'Paragraph',t:'textarea'}],
+    render(f,frame){
+      return `<tr><td style="background:#ffffff;padding:12px 36px 20px;">
+        <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.85;color:#1c1c1c;">${f.text}</p>
+      </td></tr>`;
+    }
+  },
+  image:{
+    label:'Image', icon:'I',
+    defaults:{src:'',alt:'',w:'100',align:'center'},
+    fieldDefs:[
+      {k:'src',l:'Image',t:'image'},
+      {k:'alt',l:'Alt Text',t:'input'},
+      {k:'w',l:'Width',t:'widthbtns'},
+      {k:'align',l:'Align',t:'alignbtns'},
+    ],
+    render(f,frame){
+      const maxW=528, px=Math.round(maxW*parseInt(f.w||'100')/100);
+      const ml=f.align==='right'?'auto':f.align==='left'?'0':'auto';
+      const mr=f.align==='right'?'0':f.align==='left'?'auto':'auto';
+      const img=f.src
+        ?`<img src="${f.src}" alt="${f.alt||''}" width="${px}" style="display:block;width:100%;max-width:${px}px;height:auto;border:0;margin-left:${ml};margin-right:${mr};">`
+        :`<table border="0" cellpadding="0" cellspacing="0" width="${px}"><tr><td style="height:${Math.round(px*.55)}px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+      return `<tr><td style="background:#ffffff;padding:16px 36px;">${img}</td></tr>`;
+    }
+  },
+  img_text:{
+    label:'Image + Text', icon:'IT',
+    defaults:{src:'',alt:'',side:'left',text:'Pair an image with compelling body copy. Great for showcasing a feature, person, or visual concept alongside context.'},
+    fieldDefs:[
+      {k:'src',l:'Image',t:'image'},
+      {k:'alt',l:'Alt Text',t:'input'},
+      {k:'side',l:'Image Side',t:'select',opts:['left','right']},
+      {k:'text',l:'Text',t:'textarea'},
+    ],
+    render(f,frame){
+      const imgW=220;
+      const img=f.src
+        ?`<img src="${f.src}" alt="${f.alt||''}" width="${imgW}" style="display:block;width:${imgW}px;height:auto;border:0;">`
+        :`<table border="0" cellpadding="0" cellspacing="0" width="${imgW}"><tr><td style="height:160px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+      const imgCell=`<td valign="top" width="${imgW}" style="padding-${f.side==='left'?'right':'left'}:20px;">${img}</td>`;
+      const txtCell=`<td valign="top"><p style="margin:0;font-family:Georgia,serif;font-size:15px;line-height:1.8;color:#1c1c1c;">${f.text}</p></td>`;
+      return `<tr><td style="background:#ffffff;padding:20px 36px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          ${f.side==='left'?imgCell+txtCell:txtCell+imgCell}
+        </tr></table>
+      </td></tr>`;
+    }
+  },
+  cta:{
+    label:'CTA Button', icon:'CTA',
+    defaults:{label:'Learn More',url:'https://rankings.io',align:'left'},
+    fieldDefs:[
+      {k:'label',l:'Button Text',t:'input'},
+      {k:'url',l:'URL',t:'input'},
+      {k:'align',l:'Alignment',t:'select',opts:['left','center','right']},
+    ],
+    render(f,frame){
+      const color=frame.color_cta||'#0A0A0A';
+      const td_align=f.align||'left';
+      return `<tr><td style="background:#ffffff;padding:12px 36px 24px;" align="${td_align}">
+        <table border="0" cellpadding="0" cellspacing="0" style="display:inline-table;"><tr><td style="background:${color};">
+          <a href="${f.url}" style="display:inline-block;padding:14px 28px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ffffff;text-decoration:none;">${f.label}</a>
+        </td></tr></table>
+      </td></tr>`;
+    }
+  },
+  quote:{
+    label:'Pull Quote', icon:'"',
+    defaults:{text:'The insight that changed everything about how we thought about this problem.'},
+    fieldDefs:[{k:'text',l:'Quote Text',t:'textarea'}],
+    render(f,frame){
+      const color=frame.color_cta||'#C8391A';
+      return `<tr><td style="background:#ffffff;padding:8px 36px 24px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          <td style="border-left:4px solid ${color};padding:16px 20px;background:#F7F6F2;">
+            <p style="margin:0;font-family:Georgia,serif;font-size:18px;line-height:1.65;color:#0a0a0a;font-style:italic;">\u201c${f.text}\u201d</p>
+          </td>
+        </tr></table>
+      </td></tr>`;
+    }
+  },
+  stats:{
+    label:'Stats Row', icon:'123',
+    defaults:{s1_val:'+240%',s1_label:'Organic Traffic',s2_val:'4x',s2_label:'Lead Volume',s3_val:'87',s3_label:'Page 1 Keywords'},
+    fieldDefs:[
+      {k:'s1_val',l:'Stat 1 Value',t:'input'},{k:'s1_label',l:'Stat 1 Label',t:'input'},
+      {k:'s2_val',l:'Stat 2 Value',t:'input'},{k:'s2_label',l:'Stat 2 Label',t:'input'},
+      {k:'s3_val',l:'Stat 3 Value',t:'input'},{k:'s3_label',l:'Stat 3 Label',t:'input'},
+    ],
+    render(f,frame){
+      const color=frame.color_cta||'#C8391A';
+      return `<tr><td style="background:#ffffff;padding:20px 36px 24px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          ${[['s1','left'],['s2','center'],['s3','right']].map(([k,a])=>`
+          <td align="${a}" style="width:33%;padding:16px 6px;background:#F5F4F0;text-align:center;">
+            <p style="margin:0 0 4px;font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:900;color:${color};">${f[k+'_val']}</p>
+            <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;">${f[k+'_label']}</p>
+          </td>`).join('')}
+        </tr></table>
+      </td></tr>`;
+    }
+  },
+  three_col:{
+    label:'3-Col Cards', icon:'|||',
+    defaults:{
+      c1_src:'',c1_title:'Card One',c1_desc:'Short description for this card item goes here.',
+      c2_src:'',c2_title:'Card Two',c2_desc:'Short description for this card item goes here.',
+      c3_src:'',c3_title:'Card Three',c3_desc:'Short description for this card item goes here.',
+    },
+    fieldDefs:[
+      {k:'c1_src',l:'Card 1 Image',t:'image'},{k:'c1_title',l:'Card 1 Title',t:'input'},{k:'c1_desc',l:'Card 1 Desc',t:'textarea'},
+      {k:'c2_src',l:'Card 2 Image',t:'image'},{k:'c2_title',l:'Card 2 Title',t:'input'},{k:'c2_desc',l:'Card 2 Desc',t:'textarea'},
+      {k:'c3_src',l:'Card 3 Image',t:'image'},{k:'c3_title',l:'Card 3 Title',t:'input'},{k:'c3_desc',l:'Card 3 Desc',t:'textarea'},
+    ],
+    render(f,frame){
+      const color=frame.color_cta||'#0A0A0A';
+      const card=(src,title,desc,pad)=>{
+        const img=src?`<img src="${src}" alt="" width="155" style="display:block;width:155px;height:auto;border:0;">`
+          :`<table border="0" cellpadding="0" cellspacing="0" width="155"><tr><td style="height:110px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:8px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+        return `<td valign="top" width="173" style="padding:0 ${pad};">${img}
+          <p style="margin:10px 0 5px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;line-height:1.3;">${title}</p>
+          <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:#666;">${desc}</p>
+        </td>`;
+      };
+      return `<tr><td style="background:#ffffff;padding:20px 28px 28px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          ${card(f.c1_src,f.c1_title,f.c1_desc,'0 9px 0 0')}
+          ${card(f.c2_src,f.c2_title,f.c2_desc,'0 4px')}
+          ${card(f.c3_src,f.c3_title,f.c3_desc,'0 0 0 9px')}
+        </tr></table>
+      </td></tr>`;
+    }
+  },
+  two_col:{
+    label:'2-Col Images', icon:'||',
+    defaults:{
+      left_src:'',left_caption:'Caption for the left image.',
+      right_src:'',right_caption:'Caption for the right image.',
+    },
+    fieldDefs:[
+      {k:'left_src',l:'Left Image',t:'image'},{k:'left_caption',l:'Left Caption',t:'input'},
+      {k:'right_src',l:'Right Image',t:'image'},{k:'right_caption',l:'Right Caption',t:'input'},
+    ],
+    render(f,frame){
+      const col=(src,cap,pad)=>{
+        const img=src?`<img src="${src}" alt="" width="252" style="display:block;width:252px;height:auto;border:0;">`
+          :`<table border="0" cellpadding="0" cellspacing="0" width="252"><tr><td style="height:170px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+        return `<td valign="top" width="264" style="padding:0 ${pad};">${img}
+          <p style="margin:8px 0 0;font-family:Georgia,serif;font-size:12px;line-height:1.6;color:#666;">${cap}</p>
+        </td>`;
+      };
+      return `<tr><td style="background:#ffffff;padding:16px 36px 24px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          ${col(f.left_src,f.left_caption,'0 12px 0 0')}
+          ${col(f.right_src,f.right_caption,'0 0 0 12px')}
+        </tr></table>
+      </td></tr>`;
+    }
+  },
+  callout:{
+    label:'Callout Box', icon:'!',
+    defaults:{text:'A key point, announcement, or highlight that deserves its own visual emphasis.',bg:'#F0F7FF',border:'#3a93cf'},
+    fieldDefs:[
+      {k:'text',l:'Content',t:'textarea'},
+      {k:'bg',l:'Background',t:'color'},
+      {k:'border',l:'Border Color',t:'color'},
+    ],
+    render(f,frame){
+      return `<tr><td style="background:#ffffff;padding:8px 36px 16px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
+          <td style="background:${f.bg||'#F0F7FF'};border-left:4px solid ${f.border||'#3a93cf'};padding:16px 20px;">
+            <p style="margin:0;font-family:Georgia,serif;font-size:15px;line-height:1.75;color:#1c1c1c;">${f.text}</p>
+          </td>
+        </tr></table>
+      </td></tr>`;
+    }
+  },
+  divider:{
+    label:'Divider', icon:'—',
+    defaults:{color:'#E4E4E4',spacing:'16'},
+    fieldDefs:[
+      {k:'color',l:'Line Color',t:'color'},
+      {k:'spacing',l:'Padding (px)',t:'input'},
+    ],
+    render(f,frame){
+      const sp=parseInt(f.spacing||'16');
+      return `<tr><td style="background:#ffffff;padding:${sp}px 36px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:${f.color||'#E4E4E4'};font-size:0;">&nbsp;</td></tr></table>
+      </td></tr>`;
+    }
+  },
+  spacer:{
+    label:'Spacer', icon:'↕',
+    defaults:{height:'32',bg:'#ffffff'},
+    fieldDefs:[
+      {k:'height',l:'Height (px)',t:'input'},
+      {k:'bg',l:'Background',t:'color'},
+    ],
+    render(f,frame){
+      return `<tr><td style="height:${parseInt(f.height||'32')}px;background:${f.bg||'#ffffff'};font-size:0;line-height:0;">&nbsp;</td></tr>`;
+    }
+  },
+};
+
+// ── FRAME FIELD LABELS ────────────────────────────────────────────────────────
+const FL={
+  logo_text:'Brand / Logo',pre_header:'Preheader Text',issue_label:'Issue Label',
   color_header:'Header Color',color_cta:'Accent / CTA Color',color_bg:'Background Color',
-  eyebrow:'Eyebrow Label',hero_headline:'Hero Headline',hero_sub:'Hero Subtext',
-  f1_title:'Feature 1 Title',f1_desc:'Feature 1 Desc',f2_title:'Feature 2 Title',f2_desc:'Feature 2 Desc',
-  f3_title:'Feature 3 Title',f3_desc:'Feature 3 Desc',
-  intro:'Intro Text',subtext:'Subtext',body:'Body',
-  client_name:'Client Name',
-  result_1_label:'Result 1 Label',result_1_val:'Result 1 Value',
-  result_2_label:'Result 2 Label',result_2_val:'Result 2 Value',
-  result_3_label:'Result 3 Label',result_3_val:'Result 3 Value',
-  event_name:'Event Name',event_date:'Event Date',event_time:'Event Time',event_location:'Location',
-  speaker_name:'Speaker Name',speaker_title:'Speaker Title',
-  r1_title:'Card 1 Title',r1_desc:'Card 1 Description',
-  r2_title:'Card 2 Title',r2_desc:'Card 2 Description',
-  r3_title:'Card 3 Title',r3_desc:'Card 3 Description',
-  img_1_caption:'Image 1 Caption',img_2_caption:'Image 2 Caption',
-  img_3_caption:'Image 3 Caption',img_4_caption:'Image 4 Caption',
-  t1_title:'Thumb 1 Title',t1_desc:'Thumb 1 Desc',
-  t2_title:'Thumb 2 Title',t2_desc:'Thumb 2 Desc',
-  t3_title:'Thumb 3 Title',t3_desc:'Thumb 3 Desc',
+  footer_co:'Footer Company',footer_addr:'Footer Address',
+  eyebrow:'Eyebrow Label',
   company:'Company',greeting:'Greeting',p1:'Paragraph 1',p2:'Paragraph 2',p3:'Closing Ask',
   signoff:'Sign-Off',sender_name:'Your Name',sender_title:'Your Title',sender_email:'Your Email',
   ps:'P.S. Line',context_note:'Context Note',ask:'Ask',color_accent:'Accent Color',
-  img_hero:'Hero Image',img_content:'Content Image',img_sidebar:'Sidebar Image',
-  img_banner:'Banner Image',img_client:'Client Logo / Photo',img_speaker:'Speaker Photo',
-  img_r1:'Card 1 Image',img_r2:'Card 2 Image',img_r3:'Card 3 Image',
-  img_1:'Grid Image 1',img_2:'Grid Image 2',img_3:'Grid Image 3',img_4:'Grid Image 4',
-  img_main:'Main Image',img_t1:'Thumbnail 1',img_t2:'Thumbnail 2',img_t3:'Thumbnail 3',
-  img_feature:'Feature Image',
 };
+const FTA=new Set(['p1','p2','p3','ask','ps']);
+const FCOL=new Set(['color_header','color_cta','color_bg','color_accent']);
 
-const TA=new Set(['body_1','body_2','pull_quote','hero_sub','f1_desc','f2_desc','f3_desc',
-  'intro','subtext','body','r1_desc','r2_desc','r3_desc',
-  'img_1_caption','img_2_caption','img_3_caption','img_4_caption',
-  't1_desc','t2_desc','t3_desc','p1','p2','p3','ask','ps']);
-const COL=new Set(['color_header','color_cta','color_bg','color_accent']);
-const IMG=new Set(['img_hero','img_content','img_sidebar','img_banner','img_client','img_speaker',
-  'img_r1','img_r2','img_r3','img_1','img_2','img_3','img_4','img_main','img_t1','img_t2','img_t3','img_feature']);
-
-// IMG_META: fixed=true means no width/align controls
-const IM={
-  img_hero:    {wk:'img_hero_w',   ak:'img_hero_align',   altk:'img_hero_alt',   posk:'img_hero_pos',   pos:[], fixed:false},
-  img_content: {wk:'img_content_w',ak:'img_content_align',altk:'img_content_alt',posk:'img_content_pos',
-    pos:[{v:'after_headline',l:'After Headline'},{v:'between_paragraphs',l:'Between Paragraphs'},{v:'before_cta',l:'Before CTA'}], fixed:false},
-  img_sidebar: {wk:null,ak:null,altk:'img_sidebar_alt',posk:null,pos:[],fixed:true},
-  img_banner:  {wk:'img_banner_w', ak:'img_banner_align', altk:'img_banner_alt', posk:null, pos:[], fixed:false},
-  img_client:  {wk:'img_client_w', ak:'img_client_align', altk:'img_client_alt', posk:null, pos:[], fixed:false},
-  img_speaker: {wk:null,ak:null,altk:'img_speaker_alt',posk:null,pos:[],fixed:true},
-  img_r1:      {wk:null,ak:null,altk:'img_r1_alt',posk:null,pos:[],fixed:true},
-  img_r2:      {wk:null,ak:null,altk:'img_r2_alt',posk:null,pos:[],fixed:true},
-  img_r3:      {wk:null,ak:null,altk:'img_r3_alt',posk:null,pos:[],fixed:true},
-  img_1:       {wk:null,ak:null,altk:'img_1_alt',posk:null,pos:[],fixed:true},
-  img_2:       {wk:null,ak:null,altk:'img_2_alt',posk:null,pos:[],fixed:true},
-  img_3:       {wk:null,ak:null,altk:'img_3_alt',posk:null,pos:[],fixed:true},
-  img_4:       {wk:null,ak:null,altk:'img_4_alt',posk:null,pos:[],fixed:true},
-  img_main:    {wk:'img_main_w',   ak:'img_main_align',   altk:'img_main_alt',   posk:null, pos:[], fixed:false},
-  img_t1:      {wk:null,ak:null,altk:'img_t1_alt',posk:null,pos:[],fixed:true},
-  img_t2:      {wk:null,ak:null,altk:'img_t2_alt',posk:null,pos:[],fixed:true},
-  img_t3:      {wk:null,ak:null,altk:'img_t3_alt',posk:null,pos:[],fixed:true},
-  img_feature: {wk:'img_feature_w',ak:'img_feature_align',altk:'img_feature_alt',posk:null,pos:[],fixed:false},
-};
-
-// ─── TEMPLATE HELPERS ─────────────────────────────────────────────────────────
-function ph(w,h,label){
-  return `<table border="0" cellpadding="0" cellspacing="0" width="${w}" style="max-width:${w}px;"><tr><td style="height:${h}px;background:#E8E8E6;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;">${label||'Image'}</p></td></tr></table>`;
-}
-function imgTag(src,alt,w,mleft,mright){
-  return `<img src="${src}" alt="${alt||''}" width="${w}" style="display:block;width:100%;max-width:${w}px;height:auto;border:0;margin-left:${mleft||'0'};margin-right:${mright||'0'};">`;
-}
-function flexImg(src,alt,wPct,align,maxW){
-  if(!src) return ph(maxW,Math.round(maxW*0.56),'Image');
-  const px=Math.round(maxW*parseInt(wPct||'100')/100);
-  const ml=align==='right'?'auto':align==='left'?'0':'auto';
-  const mr=align==='right'?'0':align==='left'?'auto':'auto';
-  return imgTag(src,alt,px,ml,mr);
-}
-function fixedImg(src,alt,w,h){
-  if(!src) return ph(w,h||Math.round(w*0.7),'Image');
-  return imgTag(src,alt,w,'0','0');
-}
+// ── FRAMES ────────────────────────────────────────────────────────────────────
+// Each frame: frameFields[], frameDefaults{}, defaultBlocks[], renderOpen(ff), renderClose(ff)
 const EH=`<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">`;
 const EM=`<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>`;
 
-// ─── TEMPLATES ────────────────────────────────────────────────────────────────
-const T={
+const FRAMES={
 marketing:{
 
-/* ═══════════════════════════════════════════════════════ 1. THE DISPATCH */
 dispatch:{
   label:'The Dispatch',
-  fields:['logo_text','pre_header','issue_label','headline','img_content','body_1','body_2','pull_quote','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'Your weekly edge in legal marketing.',issue_label:'Issue No. 12 — Feb 2026',
-    headline:'The one thing your competitors are doing that you\u2019re not.',
-    img_content:'',img_content_w:'100',img_content_align:'center',img_content_pos:'after_headline',img_content_alt:'',
-    body_1:'Most law firms treat their website like a billboard. Set it, forget it, hope for the best. But the firms outpacing you are doing something different.',
-    body_2:'They\u2019re treating their digital presence like a product \u2014 shipping updates, testing ideas, measuring what moves the needle.',
-    pull_quote:'The best SEO strategy isn\u2019t the most complex one. It\u2019s the one that actually gets executed.',
-    cta_label:'Read the Full Brief \u2192',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_header:'#0A0A0A',color_cta:'#C8391A'},
-  render(f){
-    const pos=f.img_content_pos||'after_headline',iw=f.img_content_w||'100',ia=f.img_content_align||'center',ialt=f.img_content_alt||'';
-    const iblock=(slot)=>slot===pos?`<tr><td style="background:#ffffff;padding:0 36px 24px;">${flexImg(f.img_content,ialt,iw,ia,528)}</td></tr>`:'';
-    return `${EH}${EM}<body style="margin:0;padding:0;background:#EDECE8;font-family:Georgia,'Times New Roman',serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+  frameFields:['logo_text','pre_header','issue_label','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Your weekly edge in legal marketing.',issue_label:'Issue No. 12 — Feb 2026',color_header:'#0A0A0A',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'heading',fields:{text:'The one thing your competitors are doing that you\u2019re not.',size:'large',align:'left'}},
+    {id:'b2',type:'text',fields:{text:'Most law firms treat their website like a billboard. Set it, forget it, hope for the best. But the firms outpacing you are doing something different.'}},
+    {id:'b3',type:'image',fields:{src:'',alt:'',w:'100',align:'center'}},
+    {id:'b4',type:'text',fields:{text:'They\u2019re treating their digital presence like a product \u2014 shipping updates, testing ideas, measuring what moves the needle. It\u2019s not glamorous. But it compounds.'}},
+    {id:'b5',type:'quote',fields:{text:'The best SEO strategy isn\u2019t the most complex one. It\u2019s the one that actually gets executed.'}},
+    {id:'b6',type:'cta',fields:{label:'Read the Full Brief \u2192',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
+    return `${EH}${EM}<body style="margin:0;padding:0;background:#EDECE8;font-family:Georgia,serif;">
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EDECE8;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr><td style="background:${f.color_header};padding:18px 28px;">
+<tr><td style="background:${ff.color_header};padding:18px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${f.logo_text}</td>
-    <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#888;text-transform:uppercase;">${f.issue_label}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#666;text-transform:uppercase;">${ff.issue_label}</td>
   </tr></table>
-</td></tr>
-<tr><td style="background:#fff;padding:48px 36px 36px;">
-  <p style="margin:0 0 18px;font-family:Arial,sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bbb;">The Brief</p>
-  <h1 style="margin:0 0 32px;font-family:Georgia,serif;font-size:38px;line-height:1.18;color:#0a0a0a;font-weight:400;letter-spacing:-.5px;">${f.headline}</h1>
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="width:44px;height:3px;background:${f.color_cta};font-size:0;">&nbsp;</td>
-    <td style="height:1px;background:#e4e4e4;font-size:0;">&nbsp;</td>
-  </tr></table>
-</td></tr>
-${iblock('after_headline')}
-<tr><td style="background:#fff;padding:0 36px 28px;">
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:17px;line-height:1.8;color:#1c1c1c;">${f.body_1}</p>
-  ${pos==='between_paragraphs'&&f.img_content?`<div style="margin-bottom:20px;">${flexImg(f.img_content,ialt,iw,ia,528)}</div>`:''}
-  <p style="margin:0 0 28px;font-family:Georgia,serif;font-size:17px;line-height:1.8;color:#1c1c1c;">${f.body_2}</p>
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:32px;"><tr>
-    <td style="border-left:4px solid ${f.color_cta};padding:16px 20px;background:#F7F6F2;">
-      <p style="margin:0;font-family:Georgia,serif;font-size:18px;line-height:1.6;color:#0a0a0a;font-style:italic;">\u201c${f.pull_quote}\u201d</p>
-    </td>
-  </tr></table>
-  ${pos==='before_cta'&&f.img_content?`<div style="margin-bottom:24px;">${flexImg(f.img_content,ialt,iw,ia,528)}</div>`:''}
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:14px 28px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="background:${f.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="background:${ff.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
 <tr><td style="padding:20px 36px;background:#EDECE8;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong><br>${f.footer_addr}<br><br>
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong><br>${ff.footer_addr}<br><br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 2. FEATURE SPOTLIGHT */
 spotlight:{
   label:'Feature Spotlight',
-  fields:['logo_text','pre_header','eyebrow','hero_headline','img_hero','hero_sub','f1_title','f1_desc','f2_title','f2_desc','f3_title','f3_desc','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'We rebuilt rank tracking from scratch.',eyebrow:'New — Rank Intelligence',
-    hero_headline:'Track rankings that actually mean something.',
-    img_hero:'',img_hero_w:'100',img_hero_align:'center',img_hero_alt:'',
-    hero_sub:'We rebuilt our rank tracking engine from the ground up. More data points, faster updates.',
-    f1_title:'Daily position updates',f1_desc:'See how you moved overnight, not just weekly snapshots.',
-    f2_title:'Competitor delta view',f2_desc:'Get alerted when a competitor jumps past you on a term you care about.',
-    f3_title:'Local vs. national splits',f3_desc:'See performance in your city, your state, every market you\u2019re trying to win.',
-    cta_label:'See It in Action',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_header:'#0A0A0A',color_cta:'#1D4ED8'},
-  render(f){
-    const hi=f.img_hero?`<tr><td style="background:#fff;padding:0;"><img src="${f.img_hero}" alt="${f.img_hero_alt||''}" width="${Math.round(600*parseInt(f.img_hero_w||'100')/100)}" style="display:block;width:100%;max-width:${Math.round(600*parseInt(f.img_hero_w||'100')/100)}px;height:auto;border:0;"></td></tr>`:`<tr><td style="background:#fff;padding:0;">${ph(600,260,'Hero Image')}</td></tr>`;
+  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Something new just dropped.',color_header:'#0A0A0A',color_cta:'#1D4ED8',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'image',fields:{src:'',alt:'Hero image',w:'100',align:'center'}},
+    {id:'b2',type:'heading',fields:{text:'Track rankings that actually mean something.',size:'large',align:'left'}},
+    {id:'b3',type:'text',fields:{text:'We rebuilt our rank tracking engine from the ground up. More data points, faster updates, and a view of what\u2019s moving \u2014 and more importantly, what\u2019s not.'}},
+    {id:'b4',type:'three_col',fields:{c1_src:'',c1_title:'Daily Updates',c1_desc:'See how you moved overnight.',c2_src:'',c2_title:'Competitor Delta',c2_desc:'Know when rivals jump ahead.',c3_src:'',c3_title:'Local Splits',c3_desc:'City and state performance.'}},
+    {id:'b5',type:'cta',fields:{label:'See It in Action',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
     return `${EH}${EM}<body style="margin:0;padding:0;background:#F2F2F2;font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#F2F2F2;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr><td style="background:${f.color_header};height:4px;font-size:0;">&nbsp;</td></tr>
+<tr><td style="background:${ff.color_header};height:4px;font-size:0;">&nbsp;</td></tr>
 <tr><td style="background:#fff;padding:20px 32px 22px;border-bottom:1px solid #eee;">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${f.color_header};text-transform:uppercase;">${f.logo_text}</p>
-</td></tr>
-${hi}
-<tr><td style="background:#fff;padding:40px 32px 32px;">
-  <p style="margin:0 0 12px;font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:${f.color_cta};">${f.eyebrow}</p>
-  <h1 style="margin:0 0 20px;font-family:'Arial Black',Arial,sans-serif;font-size:32px;line-height:1.18;color:#0a0a0a;font-weight:900;">${f.hero_headline}</h1>
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:15px;line-height:1.75;color:#444;">${f.hero_sub}</p>
-</td></tr>
-<tr><td style="background:#fff;padding:0 32px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:#eee;font-size:0;">&nbsp;</td></tr></table></td></tr>
-<tr><td style="background:#fff;padding:28px 32px 36px;">
-  ${['f1','f2','f3'].map((x,i)=>`<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:${i<2?'20px':'32px'};"><tr>
-    <td valign="top" style="width:4px;background:${f.color_cta};border-radius:2px;font-size:0;">&nbsp;</td>
-    <td valign="top" style="padding-left:16px;">
-      <p style="margin:0 0 4px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f[x+'_title']}</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;line-height:1.65;color:#666;">${f[x+'_desc']}</p>
-    </td></tr></table>`).join('')}
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:14px 28px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="background:${f.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_header};text-transform:uppercase;">${ff.logo_text}</p>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="background:${ff.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
 <tr><td style="padding:18px 32px;background:#F2F2F2;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 3. COVER STORY */
 cover_story:{
   label:'Cover Story',
-  fields:['logo_text','pre_header','eyebrow','headline','img_hero','img_sidebar','body_1','body_2','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'Inside this issue.',eyebrow:'Deep Dive',
-    headline:'Why the best law firm sites are built like media companies.',
-    img_hero:'',img_sidebar:'',img_sidebar_alt:'',
-    body_1:'The firms ranking on page one for competitive terms aren\u2019t winning by accident. They\u2019ve made a structural decision to treat content as infrastructure.',
-    body_2:'What that means in practice: regular publishing cadence, a clear topical authority strategy, and a site architecture that search engines can actually crawl.',
-    cta_label:'Read the Full Story',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_header:'#282828',color_cta:'#C8391A'},
-  render(f){
-    const heroSrc=f.img_hero?`<img src="${f.img_hero}" alt="" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;">`:`<table border="0" cellpadding="0" cellspacing="0" width="600"><tr><td style="height:280px;background:#D8D4CC;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;">Hero Image</p></td></tr></table>`;
-    const sbSrc=f.img_sidebar?`<img src="${f.img_sidebar}" alt="${f.img_sidebar_alt||''}" width="200" style="display:block;width:200px;height:auto;border:0;">`:`<table border="0" cellpadding="0" cellspacing="0" width="200"><tr><td style="height:220px;background:#D8D4CC;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#aaa;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
-    return `${EH}${EM}<body style="margin:0;padding:0;background:#EDE8DF;font-family:Georgia,'Times New Roman',serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+  frameFields:['logo_text','pre_header','eyebrow','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Inside this issue.',eyebrow:'Deep Dive',color_header:'#282828',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'image',fields:{src:'',alt:'Cover image',w:'100',align:'center'}},
+    {id:'b2',type:'heading',fields:{text:'Why the best law firm sites are built like media companies.',size:'large',align:'left'}},
+    {id:'b3',type:'img_text',fields:{src:'',alt:'',side:'left',text:'The firms ranking on page one for competitive terms aren\u2019t winning by accident. They\u2019ve made a structural decision to treat content as infrastructure \u2014 and it shows.'}},
+    {id:'b4',type:'text',fields:{text:'What that means in practice: regular publishing cadence, a clear topical authority strategy, and a site architecture that search engines can actually crawl and understand.'}},
+    {id:'b5',type:'cta',fields:{label:'Read the Full Story',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
+    return `${EH}${EM}<body style="margin:0;padding:0;background:#EDE8DF;font-family:Georgia,serif;">
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EDE8DF;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr><td style="background:${f.color_header};padding:16px 28px;">
+<tr><td style="background:${ff.color_header};padding:16px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">${f.logo_text}</td>
-    <td align="right"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#888;text-transform:uppercase;">${f.eyebrow}</p></td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td align="right"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#888;text-transform:uppercase;">${ff.eyebrow}</p></td>
   </tr></table>
-</td></tr>
-<tr><td style="background:#fff;padding:0;">${heroSrc}</td></tr>
-<tr><td style="background:#fff;padding:36px 32px 12px;">
-  <h1 style="margin:0;font-family:Georgia,serif;font-size:34px;line-height:1.22;color:#0a0a0a;font-weight:400;letter-spacing:-.5px;">${f.headline}</h1>
-</td></tr>
-<tr><td style="background:#fff;padding:24px 32px 36px;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td valign="top" width="200" style="padding-right:24px;">${sbSrc}</td>
-    <td valign="top">
-      <p style="margin:0 0 18px;font-family:Georgia,serif;font-size:15px;line-height:1.8;color:#1c1c1c;">${f.body_1}</p>
-      <p style="margin:0 0 28px;font-family:Georgia,serif;font-size:15px;line-height:1.8;color:#1c1c1c;">${f.body_2}</p>
-      <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-        <a href="${f.cta_url}" style="display:inline-block;padding:12px 22px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-      </td></tr></table>
-    </td>
-  </tr></table>
-</td></tr>
-<tr><td style="background:${f.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
-<tr><td style="padding:18px 32px;background:#EDE8DF;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="background:${ff.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
+<tr><td style="padding:18px 28px;background:#EDE8DF;">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 4. SHOWCASE ROW */
 showcase_row:{
   label:'Showcase Row',
-  fields:['logo_text','pre_header','headline','intro','img_r1','r1_title','r1_desc','img_r2','r2_title','r2_desc','img_r3','r3_title','r3_desc','cta_label','cta_url','footer_co','footer_addr','color_bg','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'Three things worth your attention this week.',
-    headline:'This week in legal SEO.',
-    intro:'Three reads, insights, and ideas curated by the Rankings.io team.',
-    img_r1:'',r1_title:'The Content Flywheel',r1_desc:'How publishing one article a week compounds into 10x organic traffic over 18 months.',
-    img_r2:'',r2_title:'Local Pack Domination',r2_desc:'The exact playbook we used to land a personal injury firm in the map pack for 40 cities.',
-    img_r3:'',r3_title:'Technical SEO Checklist',r3_desc:'The 12 things we check on every new client site before touching a single piece of content.',
-    cta_label:'Read All Three',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_bg:'#14364d',color_cta:'#c6e005'},
-  render(f){
-    const cardImg=(key,w)=>fields[key]?`<img src="${fields[key]}" alt="" width="${w}" style="display:block;width:100%;max-width:${w}px;height:auto;border:0;">`:`<table border="0" cellpadding="0" cellspacing="0" width="${w}"><tr><td style="height:${Math.round(w*.75)}px;background:rgba(255,255,255,.1);text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
-    return `${EH}${EM}<body style="margin:0;padding:0;background:${f.color_bg};font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
-<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:${f.color_bg};"><tr><td align="center" style="padding:28px 16px;">
+  frameFields:['logo_text','pre_header','color_bg','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Three things worth your attention.',color_bg:'#14364d',color_cta:'#c6e005',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'heading',fields:{text:'This week in legal SEO.',size:'large',align:'left'}},
+    {id:'b2',type:'text',fields:{text:'Three reads, insights, and ideas curated by the Rankings.io team.'}},
+    {id:'b3',type:'three_col',fields:{c1_src:'',c1_title:'The Content Flywheel',c1_desc:'How one article a week compounds into 10x traffic over 18 months.',c2_src:'',c2_title:'Local Pack Domination',c2_desc:'The exact playbook for 40-city map pack coverage.',c3_src:'',c3_title:'Technical SEO Checklist',c3_desc:'12 things we check before touching any content.'}},
+    {id:'b4',type:'cta',fields:{label:'Read All Three',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
+    return `${EH}${EM}<body style="margin:0;padding:0;background:${ff.color_bg};font-family:Arial,sans-serif;">
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:${ff.color_bg};"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr><td style="padding:24px 28px;border-bottom:1px solid rgba(255,255,255,.1);">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${f.color_cta};text-transform:uppercase;">${f.logo_text}</p>
-</td></tr>
-<tr><td style="padding:36px 28px 20px;">
-  <h1 style="margin:0 0 10px;font-family:'Arial Black',Arial,sans-serif;font-size:30px;line-height:1.2;color:#fff;font-weight:900;">${f.headline}</h1>
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:rgba(255,255,255,.65);">${f.intro}</p>
-</td></tr>
-<tr><td style="padding:8px 28px 28px;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td valign="top" width="168" style="padding-right:10px;">
-      ${cardImg('img_r1',168)}
-      <p style="margin:10px 0 6px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.3;">${f.r1_title}</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:rgba(255,255,255,.6);">${f.r1_desc}</p>
-    </td>
-    <td valign="top" width="168" style="padding:0 5px;">
-      ${cardImg('img_r2',168)}
-      <p style="margin:10px 0 6px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.3;">${f.r2_title}</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:rgba(255,255,255,.6);">${f.r2_desc}</p>
-    </td>
-    <td valign="top" width="168" style="padding-left:10px;">
-      ${cardImg('img_r3',168)}
-      <p style="margin:10px 0 6px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.3;">${f.r3_title}</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;color:rgba(255,255,255,.6);">${f.r3_desc}</p>
-    </td>
-  </tr></table>
-</td></tr>
-<tr><td style="padding:0 28px 28px;">
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:13px 26px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#000;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="padding:20px 28px;border-top:1px solid rgba(255,255,255,.1);">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(255,255,255,.3);line-height:1.7;"><strong style="color:rgba(255,255,255,.5);">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+<tr><td style="padding:22px 28px;border-bottom:1px solid rgba(255,255,255,.1);">
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_cta};text-transform:uppercase;">${ff.logo_text}</p>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="padding:20px 28px;border-top:1px solid rgba(255,255,255,.1);">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(255,255,255,.3);line-height:1.7;"><strong style="color:rgba(255,255,255,.5);">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:rgba(255,255,255,.3);">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:rgba(255,255,255,.3);">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 5. DARK BRIEF */
 dark_brief:{
   label:'Dark Brief',
-  fields:['logo_text','pre_header','headline','img_hero','body_1','body_2','cta_label','cta_url','footer_co','footer_addr','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'Read this before your next strategy meeting.',
-    headline:'Your firm\u2019s biggest competitor isn\u2019t another law firm.',
-    img_hero:'',img_hero_w:'100',img_hero_align:'center',img_hero_alt:'',
-    body_1:'It\u2019s the Google search result above you. The one getting the click before your name even registers. Every day that position belongs to someone else is a day your phone doesn\u2019t ring.',
-    body_2:'We built Rankings.io to fix exactly this. Not with shortcuts. With methodology that compounds over time and produces durable, defensible positions.',
-    cta_label:'See How It Works',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_cta:'#c6e005'},
-  render(f){
-    const px=Math.round(600*parseInt(f.img_hero_w||'100')/100);
-    const heroRow=f.img_hero
-      ?`<tr><td style="background:#141414;padding:0;"><img src="${f.img_hero}" alt="${f.img_hero_alt||''}" width="${px}" style="display:block;width:100%;max-width:${px}px;height:auto;border:0;"></td></tr>`
-      :`<tr><td style="background:#1e1e1e;height:300px;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#333;letter-spacing:1px;text-transform:uppercase;">Hero Image</p></td></tr>`;
-    return `${EH}${EM}<body style="margin:0;padding:0;background:#141414;font-family:Georgia,'Times New Roman',serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+  frameFields:['logo_text','pre_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Read this before your next meeting.',color_cta:'#c6e005',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'image',fields:{src:'',alt:'Hero image',w:'100',align:'center'}},
+    {id:'b2',type:'heading',fields:{text:'Your firm\u2019s biggest competitor isn\u2019t another law firm.',size:'large',align:'left'}},
+    {id:'b3',type:'text',fields:{text:'It\u2019s the Google search result above you. The one getting the click before your name even registers. Every day that position belongs to someone else is a day your phone doesn\u2019t ring.'}},
+    {id:'b4',type:'text',fields:{text:'We built Rankings.io to fix exactly this. Not with shortcuts. With methodology that compounds over time and produces durable, defensible positions.'}},
+    {id:'b5',type:'cta',fields:{label:'See How It Works',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
+    return `${EH}${EM}<body style="margin:0;padding:0;background:#141414;font-family:Georgia,serif;">
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#141414;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="padding:20px 28px;border-bottom:1px solid #222;">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${f.color_cta};text-transform:uppercase;">${f.logo_text}</p>
-</td></tr>
-${heroRow}
-<tr><td style="background:#141414;padding:40px 32px 28px;">
-  <h1 style="margin:0 0 28px;font-family:Georgia,serif;font-size:36px;line-height:1.2;color:#ffffff;font-weight:400;letter-spacing:-.5px;">${f.headline}</h1>
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="width:36px;height:2px;background:${f.color_cta};font-size:0;">&nbsp;</td>
-    <td style="height:1px;background:#222;font-size:0;">&nbsp;</td>
-  </tr></table>
-</td></tr>
-<tr><td style="background:#141414;padding:0 32px 28px;">
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.85;color:#aaa;">${f.body_1}</p>
-  <p style="margin:0 0 32px;font-family:Georgia,serif;font-size:16px;line-height:1.85;color:#aaa;">${f.body_2}</p>
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:14px 28px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#000;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="padding:20px 32px;border-top:1px solid #222;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#444;line-height:1.7;"><strong style="color:#555;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_cta};text-transform:uppercase;">${ff.logo_text}</p>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="padding:20px 32px;border-top:1px solid #222;">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#444;line-height:1.7;"><strong style="color:#555;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#444;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#444;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 6. CASE STUDY */
 case_study:{
   label:'Case Study',
-  fields:['logo_text','pre_header','client_name','headline','img_banner','img_client','result_1_label','result_1_val','result_2_label','result_2_val','result_3_label','result_3_val','body_1','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'A real result from a real client.',client_name:'Thompson & Associates',
-    headline:'From page 4 to page 1 in 6 months.',
-    img_banner:'',img_client:'',img_client_w:'80',img_client_align:'left',img_client_alt:'',
-    result_1_label:'Organic Traffic',result_1_val:'+310%',
-    result_2_label:'Leads Per Month',result_2_val:'4x',
-    result_3_label:'Page 1 Keywords',result_3_val:'87',
-    body_1:'When Thompson & Associates came to us, they were spending $12k/month on paid search and getting almost nothing from organic. Six months later, organic is their #1 lead source. Here\u2019s exactly what we did.',
-    cta_label:'Read the Full Case Study',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_header:'#0A0A0A',color_cta:'#C8391A'},
-  render(f){
-    const bannerRow=f.img_banner
-      ?`<tr><td style="background:#fff;padding:0;"><img src="${f.img_banner}" alt="" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>`
-      :`<tr><td style="height:200px;background:#e8e6e0;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Banner Image</p></td></tr>`;
-    const clientLogo=f.img_client
-      ?`<img src="${f.img_client}" alt="${f.img_client_alt||''}" width="80" style="display:block;width:80px;height:auto;border:0;">`
-      :`<table border="0" cellpadding="0" cellspacing="0" width="80"><tr><td style="height:80px;background:#e0e0e0;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:8px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Logo</p></td></tr></table>`;
+  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'A real result from a real client.',color_header:'#0A0A0A',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'image',fields:{src:'',alt:'Case study banner',w:'100',align:'center'}},
+    {id:'b2',type:'heading',fields:{text:'From page 4 to page 1 in 6 months.',size:'large',align:'left'}},
+    {id:'b3',type:'stats',fields:{s1_val:'+310%',s1_label:'Organic Traffic',s2_val:'4x',s2_label:'Lead Volume',s3_val:'87',s3_label:'Page 1 Keywords'}},
+    {id:'b4',type:'text',fields:{text:'When Thompson & Associates came to us, they were spending $12k/month on paid search and getting almost nothing from organic. Six months later, organic is their #1 lead source.'}},
+    {id:'b5',type:'cta',fields:{label:'Read the Full Case Study',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
     return `${EH}${EM}<body style="margin:0;padding:0;background:#F5F4F0;font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#F5F4F0;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr><td style="background:${f.color_header};padding:18px 28px;">
+<tr><td style="background:${ff.color_header};padding:18px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${f.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:1.5px;color:#888;text-transform:uppercase;">Case Study</td>
   </tr></table>
-</td></tr>
-${bannerRow}
-<tr><td style="background:#fff;padding:28px 32px 20px;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td valign="middle" width="90" style="padding-right:16px;">${clientLogo}</td>
-    <td valign="middle">
-      <p style="margin:0 0 4px;font-family:Arial,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#bbb;">Client</p>
-      <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:16px;font-weight:900;color:#0a0a0a;">${f.client_name}</p>
-    </td>
-  </tr></table>
-</td></tr>
-<tr><td style="background:#fff;padding:0 32px 28px;">
-  <h1 style="margin:0 0 24px;font-family:'Arial Black',Arial,sans-serif;font-size:28px;line-height:1.2;color:#0a0a0a;font-weight:900;">${f.headline}</h1>
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    ${[['result_1','left'],['result_2','center'],['result_3','right']].map(([k,a])=>`
-    <td align="${a}" style="width:33%;padding:16px 8px;background:#F5F4F0;border-radius:2px;text-align:center;">
-      <p style="margin:0 0 4px;font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:900;color:${f.color_cta};">${f[k+'_val']}</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888;">${f[k+'_label']}</p>
-    </td>`).join('')}
-  </tr></table>
-</td></tr>
-<tr><td style="background:#fff;padding:0 32px 32px;">
-  <p style="margin:0 0 24px;font-family:Georgia,serif;font-size:15px;line-height:1.8;color:#333;">${f.body_1}</p>
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:13px 26px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="background:${f.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
-<tr><td style="padding:18px 32px;background:#F5F4F0;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="background:${ff.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
+<tr><td style="padding:18px 28px;background:#F5F4F0;">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 7. EVENT INVITE */
 event_invite:{
   label:'Event Invite',
-  fields:['logo_text','pre_header','event_name','event_date','event_time','event_location','img_banner','body_1','img_speaker','speaker_name','speaker_title','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'You\u2019re invited.',
-    event_name:'The Legal Marketing Summit',event_date:'March 18, 2026',event_time:'2:00 PM ET',event_location:'Virtual \u2014 Zoom',
-    img_banner:'',img_speaker:'',img_speaker_alt:'',
-    body_1:'Join us for an afternoon of straight talk on what\u2019s actually working in legal marketing right now. No sponsored content. No vendor pitches. Just data and strategy from people who live in this space.',
-    speaker_name:'Chris Dreyer',speaker_title:'CEO, Rankings.io',
-    cta_label:'Reserve Your Spot',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_header:'#14364d',color_cta:'#3a93cf'},
-  render(f){
-    const bannerRow=f.img_banner
-      ?`<tr><td style="padding:0;"><img src="${f.img_banner}" alt="" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>`
-      :`<tr><td style="height:220px;background:#1a4060;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;">Event Banner</p></td></tr>`;
-    const spkImg=f.img_speaker
-      ?`<img src="${f.img_speaker}" alt="${f.img_speaker_alt||''}" width="80" style="display:block;width:80px;height:80px;object-fit:cover;border-radius:50%;border:2px solid ${f.color_cta};">`
-      :`<table border="0" cellpadding="0" cellspacing="0" width="80"><tr><td style="height:80px;width:80px;background:rgba(255,255,255,.1);border-radius:50%;text-align:center;vertical-align:middle;border:2px solid rgba(255,255,255,.15);"><p style="margin:0;font-family:Arial,sans-serif;font-size:8px;color:rgba(255,255,255,.3);letter-spacing:1px;">Photo</p></td></tr></table>`;
+  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'You\u2019re invited.',color_header:'#14364d',color_cta:'#3a93cf',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'image',fields:{src:'',alt:'Event banner',w:'100',align:'center'}},
+    {id:'b2',type:'heading',fields:{text:'The Legal Marketing Summit — March 18, 2026',size:'large',align:'left'}},
+    {id:'b3',type:'stats',fields:{s1_val:'Mar 18',s1_label:'Date',s2_val:'2pm ET',s2_label:'Time',s3_val:'Virtual',s3_label:'Format'}},
+    {id:'b4',type:'text',fields:{text:'Join us for an afternoon of straight talk on what\u2019s actually working in legal marketing right now. No sponsored content. No vendor pitches. Just data and strategy.'}},
+    {id:'b5',type:'img_text',fields:{src:'',alt:'Speaker photo',side:'left',text:'Chris Dreyer — CEO, Rankings.io\n\nChris has spent a decade helping law firms win on Google. He\u2019ll break down the exact strategies top firms are using heading into 2026.'}},
+    {id:'b6',type:'cta',fields:{label:'Reserve Your Spot',url:'https://rankings.io',align:'center'}},
+  ],
+  renderOpen(ff){
     return `${EH}${EM}<body style="margin:0;padding:0;background:#f5f5f3;font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f5f5f3;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:#fff;padding:18px 28px;border-bottom:1px solid #eee;">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${f.color_header};text-transform:uppercase;">${f.logo_text}</p>
-</td></tr>
-${bannerRow}
-<tr><td style="background:#fff;padding:32px 32px 16px;">
-  <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:${f.color_cta};">You\u2019re Invited</p>
-  <h1 style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:28px;line-height:1.2;color:#0a0a0a;font-weight:900;">${f.event_name}</h1>
-</td></tr>
-<tr><td style="background:#fff;padding:0 32px 24px;">
-  <table border="0" cellpadding="0" cellspacing="0"><tr>
-    <td style="padding:10px 16px;background:#F5F4F0;border-left:3px solid ${f.color_cta};margin-right:12px;">
-      <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#bbb;">Date</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f.event_date}</p>
-    </td>
-    <td style="width:12px;">&nbsp;</td>
-    <td style="padding:10px 16px;background:#F5F4F0;border-left:3px solid ${f.color_cta};">
-      <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#bbb;">Time</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f.event_time}</p>
-    </td>
-    <td style="width:12px;">&nbsp;</td>
-    <td style="padding:10px 16px;background:#F5F4F0;border-left:3px solid ${f.color_cta};">
-      <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#bbb;">Where</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#0a0a0a;">${f.event_location}</p>
-    </td>
-  </tr></table>
-</td></tr>
-<tr><td style="background:${f.color_header};padding:28px 32px;">
-  <p style="margin:0 0 20px;font-family:Arial,sans-serif;font-size:15px;line-height:1.75;color:rgba(255,255,255,.8);">${f.body_1}</p>
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td valign="middle" width="90">${spkImg}</td>
-    <td valign="middle" style="padding-left:16px;">
-      <p style="margin:0 0 3px;font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#fff;">${f.speaker_name}</p>
-      <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:rgba(255,255,255,.55);">${f.speaker_title}</p>
-    </td>
-    <td valign="middle" align="right">
-      <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-        <a href="${f.cta_url}" style="display:inline-block;padding:13px 22px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-      </td></tr></table>
-    </td>
-  </tr></table>
-</td></tr>
-<tr><td style="padding:18px 32px;background:#f5f5f3;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_header};text-transform:uppercase;">${ff.logo_text}</p>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="padding:18px 28px;background:#f5f5f3;">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 8. THE GRID */
 the_grid:{
   label:'The Grid',
-  fields:['logo_text','pre_header','headline','img_1','img_1_caption','img_2','img_2_caption','img_3','img_3_caption','img_4','img_4_caption','cta_label','cta_url','footer_co','footer_addr','color_header','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'Four things in four images.',
-    headline:'The week in legal marketing.',
-    img_1:'',img_1_caption:'Google\u2019s latest algo update hit 40% of legal sites. Here\u2019s what changed.',
-    img_2:'',img_2_caption:'The anatomy of a page-one personal injury landing page in 2026.',
-    img_3:'',img_3_caption:'Why your Google Business Profile is your most underutilized asset.',
-    img_4:'',img_4_caption:'Three law firms that doubled leads without increasing ad spend.',
-    cta_label:'Read All Stories',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_header:'#0A0A0A',color_cta:'#3a93cf'},
-  render(f){
-    const cell=(imgKey,capKey,side)=>{
-      const img=f[imgKey]
-        ?`<img src="${f[imgKey]}" alt="" width="264" style="display:block;width:264px;height:auto;border:0;">`
-        :`<table border="0" cellpadding="0" cellspacing="0" width="264"><tr><td style="height:176px;background:#e8e8e8;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
-      const pad=side==='left'?'padding-right:6px':'padding-left:6px';
-      return `<td valign="top" width="264" style="${pad};">${img}<p style="margin:10px 0 0;font-family:Georgia,serif;font-size:13px;line-height:1.6;color:#333;">${f[capKey]}</p></td>`;
-    };
+  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Four stories, four images.',color_header:'#0A0A0A',color_cta:'#3a93cf',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'heading',fields:{text:'The week in legal marketing.',size:'medium',align:'left'}},
+    {id:'b2',type:'two_col',fields:{left_src:'',left_caption:'Google\u2019s algo update hit 40% of legal sites. Here\u2019s what changed.',right_src:'',right_caption:'The anatomy of a page-one PI landing page in 2026.'}},
+    {id:'b3',type:'two_col',fields:{left_src:'',left_caption:'Why your Google Business Profile is your most underutilized asset.',right_src:'',right_caption:'Three law firms that doubled leads without increasing ad spend.'}},
+    {id:'b4',type:'cta',fields:{label:'Read All Stories',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
     return `${EH}${EM}<body style="margin:0;padding:0;background:#ffffff;font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#fff;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr><td style="background:${f.color_header};padding:18px 28px;">
+<tr><td style="background:${ff.color_header};padding:18px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${f.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#888;text-transform:uppercase;">The Grid</td>
   </tr></table>
-</td></tr>
-<tr><td style="padding:28px 32px 20px;">
-  <h1 style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:24px;line-height:1.2;color:#0a0a0a;font-weight:900;">${f.headline}</h1>
-</td></tr>
-<tr><td style="padding:0 32px 18px;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    ${cell('img_1','img_1_caption','left')}${cell('img_2','img_2_caption','right')}
-  </tr></table>
-</td></tr>
-<tr><td style="padding:0 32px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:#eee;font-size:0;">&nbsp;</td></tr></table></td></tr>
-<tr><td style="padding:18px 32px 28px;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    ${cell('img_3','img_3_caption','left')}${cell('img_4','img_4_caption','right')}
-  </tr></table>
-</td></tr>
-<tr><td style="padding:0 32px 28px;">
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:13px 24px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="background:${f.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
-<tr><td style="padding:18px 32px;background:#f8f8f8;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="background:${ff.color_header};height:3px;font-size:0;">&nbsp;</td></tr>
+<tr><td style="padding:18px 28px;background:#f8f8f8;">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 9. BOLD DROP */
 bold_drop:{
   label:'Bold Drop',
-  fields:['logo_text','pre_header','eyebrow','headline','body_1','img_main','img_t1','t1_title','t1_desc','img_t2','t2_title','t2_desc','img_t3','t3_title','t3_desc','cta_label','cta_url','footer_co','footer_addr','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'New from Rankings.io.',eyebrow:'Just Dropped',
-    headline:'Three tools we\u2019re shipping this quarter.',
-    body_1:'We\u2019ve been heads down building. Here\u2019s what\u2019s coming out of the lab and into your dashboard.',
-    img_main:'',img_main_w:'100',img_main_align:'center',img_main_alt:'',
-    img_t1:'',t1_title:'Rank Intelligence',t1_desc:'Daily position tracking with competitor alerts built in.',
-    img_t2:'',t2_title:'Content Radar',t2_desc:'Find content gaps before your competitors do.',
-    img_t3:'',t3_title:'Lead Decoder',t3_desc:'Tie organic rankings directly to phone calls and form fills.',
-    cta_label:'Get Early Access',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_cta:'#282828'},
-  render(f){
-    const mainPx=Math.round(544*parseInt(f.img_main_w||'100')/100);
-    const mainImg=f.img_main
-      ?`<img src="${f.img_main}" alt="${f.img_main_alt||''}" width="${mainPx}" style="display:block;width:100%;max-width:${mainPx}px;height:auto;border:0;margin-left:auto;margin-right:auto;">`
-      :`<table border="0" cellpadding="0" cellspacing="0" width="544"><tr><td style="height:306px;background:rgba(0,0,0,.12);text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(0,0,0,.35);letter-spacing:1px;text-transform:uppercase;">Main Image</p></td></tr></table>`;
-    const thumb=(imgKey,title,desc)=>{
-      const img=f[imgKey]
-        ?`<img src="${f[imgKey]}" alt="" width="156" style="display:block;width:156px;height:156px;object-fit:cover;border:0;">`
-        :`<table border="0" cellpadding="0" cellspacing="0" width="156"><tr><td style="height:120px;background:rgba(0,0,0,.12);text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:8px;color:rgba(0,0,0,.35);letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
-      return `<td valign="top" width="166" style="padding:0 5px;">
-        ${img}
-        <p style="margin:10px 0 4px;font-family:Arial,sans-serif;font-size:12px;font-weight:700;color:#0a0a0a;line-height:1.3;">${title}</p>
-        <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;line-height:1.6;color:rgba(0,0,0,.6);">${desc}</p>
-      </td>`;
-    };
+  frameFields:['logo_text','pre_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'New from Rankings.io.',color_cta:'#282828',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'heading',fields:{text:'Three tools we\u2019re shipping this quarter.',size:'large',align:'left'}},
+    {id:'b2',type:'text',fields:{text:'We\u2019ve been heads down building. Here\u2019s what\u2019s coming out of the lab and into your dashboard.'}},
+    {id:'b3',type:'image',fields:{src:'',alt:'Product image',w:'100',align:'center'}},
+    {id:'b4',type:'three_col',fields:{c1_src:'',c1_title:'Rank Intelligence',c1_desc:'Daily position tracking with competitor alerts.',c2_src:'',c2_title:'Content Radar',c2_desc:'Find content gaps before competitors do.',c3_src:'',c3_title:'Lead Decoder',c3_desc:'Tie rankings directly to phone calls.'}},
+    {id:'b5',type:'cta',fields:{label:'Get Early Access',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
     return `${EH}${EM}<body style="margin:0;padding:0;background:#EEDC82;font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EEDC82;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="padding:20px 28px;border-bottom:2px solid rgba(0,0,0,.12);">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#0a0a0a;text-transform:uppercase;">${f.logo_text}</td>
-    <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:rgba(0,0,0,.5);text-transform:uppercase;">${f.eyebrow}</td>
-  </tr></table>
-</td></tr>
-<tr><td style="padding:32px 28px 20px;">
-  <h1 style="margin:0 0 12px;font-family:'Arial Black',Arial,sans-serif;font-size:32px;line-height:1.18;color:#0a0a0a;font-weight:900;">${f.headline}</h1>
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:rgba(0,0,0,.65);">${f.body_1}</p>
-</td></tr>
-<tr><td style="padding:0 28px 24px;">${mainImg}</td></tr>
-<tr><td style="padding:8px 28px 28px;">
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-left:-5px;margin-right:-5px;"><tr>
-    ${thumb('img_t1',f.t1_title,f.t1_desc)}
-    ${thumb('img_t2',f.t2_title,f.t2_desc)}
-    ${thumb('img_t3',f.t3_title,f.t3_desc)}
-  </tr></table>
-</td></tr>
-<tr><td style="padding:0 28px 28px;">
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:14px 28px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="padding:18px 28px;border-top:2px solid rgba(0,0,0,.12);">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(0,0,0,.45);line-height:1.7;"><strong style="color:rgba(0,0,0,.6);">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#0a0a0a;text-transform:uppercase;">${ff.logo_text}</p>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="padding:18px 28px;border-top:2px solid rgba(0,0,0,.12);">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:rgba(0,0,0,.45);line-height:1.7;"><strong style="color:rgba(0,0,0,.6);">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:rgba(0,0,0,.45);">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:rgba(0,0,0,.45);">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-/* ═══════════════════════════════════════════════════════ 10. THE STUDIO */
 the_studio:{
   label:'The Studio',
-  fields:['logo_text','pre_header','headline','subtext','img_hero','img_feature','body_1','body_2','cta_label','cta_url','footer_co','footer_addr','color_cta'],
-  defaults:{logo_text:'RANKINGS.IO',pre_header:'Work that speaks.',
-    headline:'What exceptional legal marketing looks like.',
-    subtext:'A look inside the strategies, systems, and creative decisions behind some of the most effective law firm digital presences we\u2019ve built.',
-    img_hero:'',img_hero_w:'100',img_hero_align:'center',img_hero_alt:'',
-    img_feature:'',img_feature_w:'45',img_feature_align:'right',img_feature_alt:'',
-    body_1:'Every firm we work with starts in the same place: invisible on search. What changes is the work that happens next. The audit, the strategy, the execution, the iteration.',
-    body_2:'We don\u2019t take shortcuts. We don\u2019t sell packages. We build systems that outlast any single algorithm update.',
-    cta_label:'See Our Work',cta_url:'https://rankings.io',
-    footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101',color_cta:'#0A0A0A'},
-  render(f){
-    const heroPx=Math.round(600*parseInt(f.img_hero_w||'100')/100);
-    const heroRow=f.img_hero
-      ?`<tr><td style="background:#111;padding:0;"><img src="${f.img_hero}" alt="${f.img_hero_alt||''}" width="${heroPx}" style="display:block;width:100%;max-width:${heroPx}px;height:auto;border:0;"></td></tr>`
-      :`<tr><td style="background:#111;height:280px;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#333;letter-spacing:1px;text-transform:uppercase;">Hero Image</p></td></tr>`;
-    const featPx=Math.round(536*parseInt(f.img_feature_w||'45')/100);
-    const featAlign=f.img_feature_align||'right';
-    const featImg=f.img_feature
-      ?`<img src="${f.img_feature}" alt="${f.img_feature_alt||''}" width="${featPx}" style="display:block;width:${featPx}px;height:auto;border:0;float:${featAlign};margin-${featAlign==='right'?'left':'right'}:20px;margin-bottom:8px;">`
-      :`<table border="0" cellpadding="0" cellspacing="0" width="${featPx}" style="float:${featAlign};margin-${featAlign==='right'?'left':'right'}:20px;margin-bottom:8px;"><tr><td style="height:${Math.round(featPx*.7)}px;background:#e8e8e8;text-align:center;vertical-align:middle;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;color:#bbb;letter-spacing:1px;text-transform:uppercase;">Image</p></td></tr></table>`;
+  frameFields:['logo_text','pre_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Work that speaks.',color_cta:'#0A0A0A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  defaultBlocks:[
+    {id:'b1',type:'image',fields:{src:'',alt:'Studio hero',w:'100',align:'center'}},
+    {id:'b2',type:'heading',fields:{text:'What exceptional legal marketing looks like.',size:'large',align:'left'}},
+    {id:'b3',type:'img_text',fields:{src:'',alt:'Feature image',side:'right',text:'Every firm we work with starts in the same place: invisible on search. What changes is the work that happens next. The audit, the strategy, the execution, the iteration.'}},
+    {id:'b4',type:'text',fields:{text:'We don\u2019t take shortcuts. We don\u2019t sell packages. We build systems that outlast any single algorithm update.'}},
+    {id:'b5',type:'cta',fields:{label:'See Our Work',url:'https://rankings.io',align:'left'}},
+  ],
+  renderOpen(ff){
     return `${EH}${EM}<body style="margin:0;padding:0;background:#ffffff;font-family:Arial,sans-serif;">
-<div style="display:none;max-height:0;overflow:hidden;">${f.pre_header}</div>
+<div style="display:none;max-height:0;overflow:hidden;">${ff.pre_header}</div>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#fff;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:#0a0a0a;padding:20px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${f.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#444;text-transform:uppercase;">Studio</td>
   </tr></table>
-</td></tr>
-${heroRow}
-<tr><td style="background:#fff;padding:40px 32px 24px;border-bottom:1px solid #eee;">
-  <h1 style="margin:0 0 14px;font-family:Georgia,serif;font-size:32px;line-height:1.22;color:#0a0a0a;font-weight:400;letter-spacing:-.5px;">${f.headline}</h1>
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#888;">${f.subtext}</p>
-</td></tr>
-<tr><td style="background:#fff;padding:28px 32px 32px;">
-  ${featImg}
-  <p style="margin:0 0 18px;font-family:Georgia,serif;font-size:15px;line-height:1.85;color:#333;">${f.body_1}</p>
-  <p style="margin:0 0 28px;font-family:Georgia,serif;font-size:15px;line-height:1.85;color:#333;">${f.body_2}</p>
-  <div style="clear:both;"></div>
-  <table border="0" cellpadding="0" cellspacing="0"><tr><td style="background:${f.color_cta};">
-    <a href="${f.cta_url}" style="display:inline-block;padding:13px 26px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;text-decoration:none;">${f.cta_label}</a>
-  </td></tr></table>
-</td></tr>
-<tr><td style="background:#0a0a0a;height:3px;font-size:0;">&nbsp;</td></tr>
-<tr><td style="padding:18px 32px;background:#f8f8f8;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${f.footer_co}</strong> &middot; ${f.footer_addr}<br>
+</td></tr>`;
+  },
+  renderClose(ff){
+    return `<tr><td style="background:#0a0a0a;height:3px;font-size:0;">&nbsp;</td></tr>
+<tr><td style="padding:18px 28px;background:#f8f8f8;">
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#aaa;line-height:1.7;"><strong style="color:#888;">${ff.footer_co}</strong> &middot; ${ff.footer_addr}<br>
   <a href="{{ unsubscribe_link }}" style="color:#aaa;">Unsubscribe</a> &middot; <a href="{{ view_in_browser_link }}" style="color:#aaa;">View in browser</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
 },// end marketing
 
-/* ═══════════════════════════════════════════════════════ SALES */
 sales:{
 
 outreach:{
   label:'Personal Outreach',
-  fields:['company','greeting','p1','p2','p3','signoff','sender_name','sender_title','sender_email','ps','color_accent'],
-  defaults:{company:'Rankings.io',greeting:'Hi {{ contact.firstname }},',
+  frameFields:['company','greeting','p1','p2','p3','signoff','sender_name','sender_title','sender_email','ps','color_accent'],
+  frameDefaults:{company:'Rankings.io',greeting:'Hi {{ contact.firstname }},',
     p1:'I came across {{ contact.company }} and noticed you\u2019ve been building a real presence in your market. Most law firms your size are leaving a significant amount of organic search traffic on the table \u2014 not because they\u2019re doing anything wrong, but because the opportunity is easy to miss.',
     p2:'We work specifically with law firms on SEO and digital growth. I\u2019d love to share a quick look at where you currently rank vs. where you could be \u2014 no pitch, just useful data.',
     p3:'Worth a 20-minute call this week?',signoff:'Best,',
     sender_name:'{{ sender.firstname }} {{ sender.lastname }}',sender_title:'Client Growth, Rankings.io',sender_email:'{{ sender.email }}',
     ps:'P.S. I put together a quick snapshot of your site\u2019s current search visibility \u2014 happy to send it over if useful.',color_accent:'#0A0A0A'},
-  render(f){return `${EH}${EM}<body style="margin:0;padding:0;background:#EDECEA;font-family:Georgia,serif;">
+  defaultBlocks:[],
+  renderOpen(ff){return '';},
+  renderClose(ff){return '';},
+  renderFull(ff){
+    return `${EH}${EM}<body style="margin:0;padding:0;background:#EDECEA;font-family:Georgia,serif;">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#EDECEA;"><tr><td align="center" style="padding:36px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="560">
 <tr><td style="padding-bottom:18px;"><table border="0" cellpadding="0" cellspacing="0"><tr>
-  <td style="width:28px;height:2px;background:${f.color_accent};font-size:0;">&nbsp;</td>
+  <td style="width:28px;height:2px;background:${ff.color_accent};font-size:0;">&nbsp;</td>
   <td style="width:6px;height:2px;background:#ccc;font-size:0;">&nbsp;</td>
   <td style="width:6px;height:2px;background:#ddd;font-size:0;">&nbsp;</td>
 </tr></table></td></tr>
-<tr><td style="background:#fff;padding:38px 40px 34px;border-top:2px solid ${f.color_accent};">
-  <p style="margin:0 0 26px;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${f.company}</p>
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.greeting}</p>
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.p1}</p>
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.p2}</p>
-  <p style="margin:0 0 34px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${f.p3}</p>
-  <p style="margin:0 0 5px;font-family:Georgia,serif;font-size:16px;color:#1a1a1a;">${f.signoff}</p>
-  <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#0a0a0a;">${f.sender_name}</p>
-  <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:12px;color:#888;">${f.sender_title}</p>
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#888;">${f.sender_email}</p>
+<tr><td style="background:#fff;padding:38px 40px 34px;border-top:2px solid ${ff.color_accent};">
+  <p style="margin:0 0 26px;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${ff.company}</p>
+  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.greeting}</p>
+  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.p1}</p>
+  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.p2}</p>
+  <p style="margin:0 0 34px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.p3}</p>
+  <p style="margin:0 0 5px;font-family:Georgia,serif;font-size:16px;color:#1a1a1a;">${ff.signoff}</p>
+  <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#0a0a0a;">${ff.sender_name}</p>
+  <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:12px;color:#888;">${ff.sender_title}</p>
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#888;">${ff.sender_email}</p>
 </td></tr>
 <tr><td style="background:#F4F3EF;padding:16px 40px;border-top:1px solid #E4E2DC;">
-  <p style="margin:0;font-family:Georgia,serif;font-size:13px;line-height:1.7;color:#777;font-style:italic;">${f.ps}</p>
+  <p style="margin:0;font-family:Georgia,serif;font-size:13px;line-height:1.7;color:#777;font-style:italic;">${ff.ps}</p>
 </td></tr>
 <tr><td style="padding:16px 0 0;">
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;">You received this as a business contact. <a href="{{ unsubscribe_link }}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a></p>
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#bbb;">You received this as a business contact. <a href="{{ unsubscribe_link }}" style="color:#bbb;">Unsubscribe</a></p>
 </td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
 followup:{
   label:'Follow-Up',
-  fields:['company','greeting','context_note','p1','p2','ask','signoff','sender_name','sender_title','color_accent'],
-  defaults:{company:'Rankings.io',greeting:'Hey {{ contact.firstname }} \u2014',context_note:'Re: your firm\u2019s search visibility',
+  frameFields:['company','greeting','context_note','p1','p2','ask','signoff','sender_name','sender_title','color_accent'],
+  frameDefaults:{company:'Rankings.io',greeting:'Hey {{ contact.firstname }} \u2014',context_note:'Re: your firm\u2019s search visibility',
     p1:'I know inboxes are brutal, so I\u2019ll keep this short: I genuinely think there\u2019s an opportunity here worth 20 minutes of your time.',
     p2:'We\u2019ve helped firms like yours go from page 3 to page 1 for their most valuable search terms \u2014 and the compounding effect on inbound is significant.',
-    ask:'If now\u2019s not the right time, just let me know and I\u2019ll follow up in a few months. No pressure either way.',
+    ask:'If now\u2019s not the right time, just let me know and I\u2019ll follow up in a few months. No pressure.',
     signoff:'\u2014',sender_name:'{{ sender.firstname }}',sender_title:'Rankings.io',color_accent:'#0A0A0A'},
-  render(f){return `${EH}${EM}<body style="margin:0;padding:0;background:#fff;font-family:Georgia,serif;">
+  defaultBlocks:[],
+  renderOpen(ff){return '';},
+  renderClose(ff){return '';},
+  renderFull(ff){
+    return `${EH}${EM}<body style="margin:0;padding:0;background:#fff;font-family:Georgia,serif;">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#fff;"><tr><td align="center" style="padding:48px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="520">
 <tr><td style="padding-bottom:32px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:#e8e8e8;font-size:0;">&nbsp;</td></tr></table></td></tr>
-<tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${f.company}</p></td></tr>
-<tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#bbb;font-style:italic;">${f.context_note}</p></td></tr>
+<tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${ff.company}</p></td></tr>
+<tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#bbb;font-style:italic;">${ff.context_note}</p></td></tr>
 <tr><td>
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.greeting}</p>
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.p1}</p>
-  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.p2}</p>
-  <p style="margin:0 0 36px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${f.ask}</p>
+  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${ff.greeting}</p>
+  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${ff.p1}</p>
+  <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${ff.p2}</p>
+  <p style="margin:0 0 36px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${ff.ask}</p>
 </td></tr>
 <tr><td style="border-top:1px solid #e8e8e8;padding-top:24px;">
-  <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:16px;color:#111;">${f.signoff}</p>
-  <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#111;">${f.sender_name}</p>
-  <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#bbb;">${f.sender_title}</p>
+  <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:16px;color:#111;">${ff.signoff}</p>
+  <p style="margin:0 0 2px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#111;">${ff.sender_name}</p>
+  <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#bbb;">${ff.sender_title}</p>
 </td></tr>
 <tr><td style="padding-top:32px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#ccc;"><a href="{{ unsubscribe_link }}" style="color:#ccc;text-decoration:none;">Unsubscribe</a></p></td></tr>
-</table></td></tr></table></body></html>`;}},
+</table></td></tr></table></body></html>`;
+  }
+},
 
-}};// end TEMPLATES
+}};// end FRAMES
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-function init(){ applyMode('marketing'); }
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const eh=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const et=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let _uid=1;
+const uid=()=>'b'+(++_uid)+'_'+Math.random().toString(36).slice(2,6);
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+function init(){applyMode('marketing');}
 
 function setMode(m){
   if(mode===m)return; mode=m;
-  document.querySelectorAll('.mode-pill button').forEach((b,i)=>{
-    b.classList.toggle('active',(m==='marketing'&&i===0)||(m==='sales'&&i===1));
-  });
+  document.querySelectorAll('.mp button').forEach((b,i)=>{b.classList.toggle('on',(m==='marketing'&&i===0)||(m==='sales'&&i===1));});
   applyMode(m);
 }
 
 function applyMode(m){
   const sel=document.getElementById('ts');
   sel.innerHTML='';
-  Object.entries(T[m]).forEach(([k,t])=>{
-    const o=document.createElement('option');o.value=k;o.textContent=t.label;sel.appendChild(o);
+  Object.entries(FRAMES[m]).forEach(([k,f])=>{
+    const o=document.createElement('option');o.value=k;o.textContent=f.label;sel.appendChild(o);
   });
-  tplKey=Object.keys(T[m])[0];
-  fields={...T[m][tplKey].defaults};
+  tplKey=Object.keys(FRAMES[m])[0];
+  loadFrame();
+}
+
+function setTpl(k){tplKey=k;loadFrame();}
+
+function loadFrame(){
+  const fr=FRAMES[mode][tplKey];
+  ff={...fr.frameDefaults};
+  blocks=fr.defaultBlocks.map(b=>({...b,fields:{...b.fields},id:uid()}));
+  expandedBlks=new Set(blocks.length>0?[blocks[0].id]:[]);
+  showPicker=false;
   buildSB();renderPrev();
 }
 
-function setTpl(k){
-  tplKey=k;fields={...T[mode][tplKey].defaults};buildSB();renderPrev();
+// ── RENDER EMAIL ─────────────────────────────────────────────────────────────
+function renderHTML(){
+  const fr=FRAMES[mode][tplKey];
+  if(fr.renderFull) return fr.renderFull(ff);
+  const bodyRows=blocks.map(b=>{
+    const def=BD[b.type];
+    return def?def.render(b.fields,ff):'';
+  }).join('\n');
+  return fr.renderOpen(ff)+bodyRows+fr.renderClose(ff);
 }
 
-// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+// ── SIDEBAR ───────────────────────────────────────────────────────────────────
 function buildSB(){
-  const tpl=T[mode][tplKey];
-  let h=`<div class="sb-head">Content</div>`;
+  const fr=FRAMES[mode][tplKey];
+  let h=`<div class="sh">Frame Settings</div>`;
 
-  tpl.fields.forEach(k=>{
-    const lbl=LABELS[k]||k, val=fields[k]||'';
-
-    if(IMG.has(k)){
-      const m=IM[k]||{fixed:true};
-      const hasImg=val.length>0;
-      const wk=m.wk, ak=m.ak, altk=m.altk, posk=m.posk;
-      const curW=wk?fields[wk]||'100':'100';
-      const curA=ak?fields[ak]||'center':'center';
-      const curAlt=altk?fields[altk]||'':'';
-      const curPos=posk?fields[posk]||((m.pos[0]||{}).v||''):'';
-
-      let ctrl='';
-      if(!m.fixed){
-        const wbtns=['25','50','75','100'].map(w=>`<button class="bseg${curW===w?' on':''}" onclick="uctrl('${wk}','${w}')">${w}%</button>`).join('');
-        const abtns=['left','center','right'].map(a=>`<button class="bseg${curA===a?' on':''}" onclick="uctrl('${ak}','${a}')">${a.charAt(0).toUpperCase()+a.slice(1)}</button>`).join('');
-        const posRow=posk&&m.pos.length?`<div class="ic-row"><span class="ic-lbl">Place</span><select class="ic-sel" onchange="uctrl('${posk}',this.value)">${m.pos.map(p=>`<option value="${p.v}"${curPos===p.v?' selected':''}>${p.l}</option>`).join('')}</select></div>`:'';
-        ctrl=`<div class="ic">
-          <div class="ic-row"><span class="ic-lbl">Width</span><div class="btn-grp">${wbtns}</div></div>
-          <div class="ic-row"><span class="ic-lbl">Align</span><div class="btn-grp">${abtns}</div></div>
-          ${posRow}
-          <div class="ic-row"><span class="ic-lbl">Alt</span><input class="ic-inp" type="text" value="${eh(curAlt)}" placeholder="Describe image..." oninput="uctrl('${altk}',this.value)"></div>
-        </div>`;
-      } else if(altk){
-        ctrl=`<div class="ic"><div class="ic-row"><span class="ic-lbl">Alt</span><input class="ic-inp" type="text" value="${eh(curAlt)}" placeholder="Describe image..." oninput="uctrl('${altk}',this.value)"></div></div>`;
-      }
-
+  // Frame fields
+  fr.frameFields.forEach(k=>{
+    const lbl=FL[k]||k, val=ff[k]||'';
+    if(FCOL.has(k)){
+      const sw=BRAND.map(c=>`<div class="sw" style="background:${c.h};" title="${c.n}" onclick="abrand_ff('${k}','${c.h}')"></div>`).join('');
       h+=`<div class="fw"><div class="fl">${lbl}</div>
-        <div class="iz${hasImg?' has-img':''}" id="z-${k}"
-          ondragover="event.preventDefault();document.getElementById('z-${k}').classList.add('drag-over')"
-          ondragleave="document.getElementById('z-${k}').classList.remove('drag-over')"
-          ondrop="drop(event,'${k}')" onclick="pick('${k}')">
-          ${hasImg
-            ?`<div class="iz-tw"><img class="iz-thumb" src="${eh(val)}" alt=""><button class="iz-rm" onclick="event.stopPropagation();clr('${k}')">Remove</button></div>`
-            :`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop image or click</span></div>`}
-        </div>
-        <input type="text" class="fi" placeholder="...or paste URL" value="${eh(val)}" oninput="uimg('${k}',this.value,'z-${k}')">
-        ${ctrl}
-        <p class="img-note">Use hosted URL for actual sends. Base64 is preview-only.</p>
-      </div>`;
-
-    } else if(COL.has(k)){
-      const sw=BRAND.map(c=>`<div class="sw" style="background:${c.h};" title="${c.n} ${c.h}" onclick="abrand('${k}','${c.h}')"></div>`).join('');
-      h+=`<div class="fw"><div class="fl">${lbl}</div>
-        <div class="color-row">
-          <input type="color" value="${eh(val)}" oninput="scol('${k}',this)">
-          <input type="text" class="fi" style="flex:1;" value="${eh(val)}" oninput="stxt('${k}',this)">
-        </div>
-        <div class="sw-row">${sw}</div>
-      </div>`;
-
-    } else if(TA.has(k)){
-      h+=`<div class="fw"><div class="fl">${lbl}</div><textarea class="fi" oninput="upd('${k}',this.value)">${et(val)}</textarea></div>`;
+        <div class="cr"><input type="color" value="${eh(val)}" oninput="scolff('${k}',this)">
+        <input type="text" class="fi" style="flex:1;" value="${eh(val)}" oninput="stxtff('${k}',this)"></div>
+        <div class="swr">${sw}</div></div>`;
+    } else if(FTA.has(k)){
+      h+=`<div class="fw"><div class="fl">${lbl}</div><textarea class="fi" oninput="updff('${k}',this.value)">${et(val)}</textarea></div>`;
     } else {
-      h+=`<div class="fw"><div class="fl">${lbl}</div><input type="text" class="fi" value="${eh(val)}" oninput="upd('${k}',this.value)"></div>`;
+      h+=`<div class="fw"><div class="fl">${lbl}</div><input type="text" class="fi" value="${eh(val)}" oninput="updff('${k}',this.value)"></div>`;
     }
   });
 
-  h+=`<div class="sb-head">HubSpot Merge Tags</div><div class="tags-wrap"><p class="tags-note">Click to copy, paste into any field.</p>`;
-  Object.entries(MERGE_TAGS).forEach(([g,tags])=>{
-    h+=`<p class="tg-lbl">${g}</p><div class="tg-row">${tags.map(t=>`<span class="tc" onclick="ctag('${t}')">${t}</span>`).join('')}</div>`;
+  // Blocks section (only for marketing)
+  if(mode==='marketing'){
+    h+=`<div class="sh" style="top:auto;">Sections</div>`;
+    h+=`<div class="bk-list">`;
+    blocks.forEach((bk,idx)=>{
+      const def=BD[bk.type];
+      if(!def)return;
+      const open=expandedBlks.has(bk.id);
+      h+=`<div class="bk" id="bk-${bk.id}">
+        <div class="bk-hd" onclick="toggleBk('${bk.id}')">
+          <div class="bk-ico">${def.icon}</div>
+          <span class="bk-lbl">${def.label}</span>
+          <div class="bk-acts" onclick="event.stopPropagation()">
+            ${idx>0?`<button class="bk-btn" onclick="moveBk('${bk.id}',-1)" title="Move up">↑</button>`:''}
+            ${idx<blocks.length-1?`<button class="bk-btn" onclick="moveBk('${bk.id}',1)" title="Move down">↓</button>`:''}
+            <button class="bk-btn del" onclick="delBk('${bk.id}')" title="Remove">×</button>
+          </div>
+        </div>
+        <div class="bk-body${open?' open':''}">
+          ${renderBkFields(bk)}
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+
+    // Add block
+    const picker_open=showPicker;
+    h+=`<div class="add-bk-wrap">
+      <button class="add-bk-btn" onclick="togglePicker()">+ Add Section</button>
+      <div class="block-picker${picker_open?' open':''}">
+        <div class="bp-grid">
+          ${Object.entries(BD).map(([type,def])=>`
+            <div class="bp-item" onclick="addBk('${type}')">
+              <div class="bp-name">${def.label}</div>
+              <div class="bp-sub">${{heading:'H1/H2/H3',text:'Body paragraph',image:'Photo or graphic',img_text:'Side-by-side',cta:'Button link',quote:'Pull quote',stats:'3 metric blocks',three_col:'3 image cards',two_col:'2 image columns',callout:'Highlight box',divider:'Horizontal rule',spacer:'Blank space'}[type]||''}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Merge tags
+  h+=`<div class="sh" style="top:auto;">HubSpot Merge Tags</div>
+  <div class="tw"><p class="tn">Click to copy, paste into any field.</p>`;
+  Object.entries(MERGE).forEach(([g,tags])=>{
+    h+=`<p class="tg">${g}</p><div class="tr_">${tags.map(t=>`<span class="tc" onclick="ctag('${t}')">${t}</span>`).join('')}</div>`;
   });
   h+=`</div>`;
+
   document.getElementById('sb').innerHTML=h;
 }
 
-const eh=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-const et=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function upd(k,v){fields[k]=v;renderPrev();}
-function uctrl(k,v){fields[k]=v;buildSB();renderPrev();}
-function scol(k,cp){fields[k]=cp.value;cp.parentNode.querySelector('input[type="text"]').value=cp.value;renderPrev();}
-function stxt(k,ti){const v=ti.value;fields[k]=v;if(/^#[0-9A-Fa-f]{6}$/.test(v))ti.parentNode.querySelector('input[type="color"]').value=v;renderPrev();}
-function abrand(k,h){fields[k]=h;buildSB();renderPrev();}
-
-// ─── IMAGE OPS ────────────────────────────────────────────────────────────────
-function pick(k){pendingImg=k;const f=document.getElementById('fi');f.value='';f.click();}
-document.getElementById('fi').addEventListener('change',function(){
-  if(this.files&&this.files[0]&&pendingImg)readImg(this.files[0],pendingImg);
-});
-function drop(ev,k){
-  ev.preventDefault();
-  document.getElementById('z-'+k).classList.remove('drag-over');
-  const f=ev.dataTransfer.files[0];
-  if(f&&f.type.startsWith('image/'))readImg(f,k);
+function renderBkFields(bk){
+  const def=BD[bk.type];
+  if(!def)return '';
+  let h='';
+  def.fieldDefs.forEach(fd=>{
+    const val=bk.fields[fd.k]||'';
+    const oid=`bk-${bk.id}-${fd.k}`;
+    if(fd.t==='image'){
+      const hasImg=val.length>0;
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
+        <div class="iz${hasImg?' hi':''}" id="iz-${oid}"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="dropBk(event,'${bk.id}','${fd.k}')"
+          onclick="pickBk('${bk.id}','${fd.k}')">
+          ${hasImg
+            ?`<div class="iz-tw"><img class="iz-th" src="${eh(val)}" alt=""><button class="iz-rm" onclick="event.stopPropagation();clrBk('${bk.id}','${fd.k}')">Remove</button></div>`
+            :`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop or click</span></div>`}
+        </div>
+        <input type="text" class="fi" placeholder="...or paste URL" value="${eh(val)}" oninput="updBkImg('${bk.id}','${fd.k}',this.value,'iz-${oid}')">
+        <p class="in">Use hosted URL for actual sends.</p>
+      </div>`;
+    } else if(fd.t==='widthbtns'){
+      const btns=['25','50','75','100'].map(w=>`<button class="bs${val===w?' on':''}" onclick="updBk('${bk.id}','${fd.k}','${w}')">${w}%</button>`).join('');
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div></div>`;
+    } else if(fd.t==='alignbtns'){
+      const btns=['left','center','right'].map(a=>`<button class="bs${val===a?' on':''}" onclick="updBk('${bk.id}','${fd.k}','${a}')">${a.charAt(0).toUpperCase()+a.slice(1)}</button>`).join('');
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div></div>`;
+    } else if(fd.t==='select'){
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
+        <select class="fi" onchange="updBk('${bk.id}','${fd.k}',this.value)">
+          ${(fd.opts||[]).map(o=>`<option value="${o}"${val===o?' selected':''}>${o.charAt(0).toUpperCase()+o.slice(1)}</option>`).join('')}
+        </select></div>`;
+    } else if(fd.t==='textarea'){
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><textarea class="fi" oninput="updBk('${bk.id}','${fd.k}',this.value)">${et(val)}</textarea></div>`;
+    } else if(fd.t==='color'){
+      const sw=BRAND.map(c=>`<div class="sw" style="background:${c.h};" title="${c.n}" onclick="updBk('${bk.id}','${fd.k}','${c.h}')"></div>`).join('');
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
+        <div class="cr"><input type="color" value="${eh(val)||'#ffffff'}" oninput="updBkCol('${bk.id}','${fd.k}',this)">
+        <input type="text" class="fi" style="flex:1;" value="${eh(val)}" oninput="updBkColTxt('${bk.id}','${fd.k}',this)"></div>
+        <div class="swr">${sw}</div></div>`;
+    } else {
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
+        <input type="text" class="fi" value="${eh(val)}" oninput="updBk('${bk.id}','${fd.k}',this.value)"></div>`;
+    }
+  });
+  return h;
 }
-function readImg(file,k){
+
+// ── FRAME FIELD UPDATES ───────────────────────────────────────────────────────
+function updff(k,v){ff[k]=v;renderPrev();}
+function scolff(k,cp){ff[k]=cp.value;cp.parentNode.querySelector('input[type="text"]').value=cp.value;renderPrev();}
+function stxtff(k,ti){ff[k]=ti.value;if(/^#[0-9A-Fa-f]{6}$/.test(ti.value))ti.parentNode.querySelector('input[type="color"]').value=ti.value;renderPrev();}
+function abrand_ff(k,h){ff[k]=h;buildSB();renderPrev();}
+
+// ── BLOCK OPS ─────────────────────────────────────────────────────────────────
+function toggleBk(id){
+  if(expandedBlks.has(id))expandedBlks.delete(id); else expandedBlks.add(id);
+  buildSB();
+}
+function togglePicker(){showPicker=!showPicker;buildSB();}
+function addBk(type){
+  const def=BD[type];
+  if(!def)return;
+  const id=uid();
+  const newBk={id,type,fields:{...def.defaults}};
+  blocks.push(newBk);
+  expandedBlks.add(id);
+  showPicker=false;
+  buildSB();renderPrev();
+  // scroll to bottom of sidebar
+  setTimeout(()=>{const sb=document.getElementById('sb');if(sb)sb.scrollTop=sb.scrollHeight;},50);
+}
+function delBk(id){
+  blocks=blocks.filter(b=>b.id!==id);
+  expandedBlks.delete(id);
+  buildSB();renderPrev();
+}
+function moveBk(id,dir){
+  const i=blocks.findIndex(b=>b.id===id);
+  if(i<0)return;
+  const j=i+dir;
+  if(j<0||j>=blocks.length)return;
+  [blocks[i],blocks[j]]=[blocks[j],blocks[i]];
+  buildSB();renderPrev();
+}
+function updBk(id,k,v){
+  const bk=blocks.find(b=>b.id===id);
+  if(!bk)return;
+  bk.fields[k]=v;
+  // update active state on btn groups without full rebuild
+  buildSB();renderPrev();
+}
+function updBkCol(id,k,cp){
+  const bk=blocks.find(b=>b.id===id);if(!bk)return;
+  bk.fields[k]=cp.value;
+  const wrap=cp.closest('.bk-field');
+  if(wrap){const t=wrap.querySelector('input[type="text"]');if(t)t.value=cp.value;}
+  renderPrev();
+}
+function updBkColTxt(id,k,ti){
+  const bk=blocks.find(b=>b.id===id);if(!bk)return;
+  bk.fields[k]=ti.value;
+  if(/^#[0-9A-Fa-f]{6}$/.test(ti.value)){const wrap=ti.closest('.bk-field');if(wrap){const c=wrap.querySelector('input[type="color"]');if(c)c.value=ti.value;}}
+  renderPrev();
+}
+
+// Image in blocks
+function pickBk(id,k){pendingImg=null;pendingImgBk={id,k};const f=document.getElementById('fui');f.value='';f.click();}
+document.getElementById('fui').addEventListener('change',function(){
+  if(!this.files||!this.files[0])return;
   const r=new FileReader();
-  r.onload=e=>{fields[k]=e.target.result;buildSB();renderPrev();};
+  r.onload=e=>{
+    if(pendingImgBk){
+      const bk=blocks.find(b=>b.id===pendingImgBk.id);
+      if(bk){bk.fields[pendingImgBk.k]=e.target.result;}
+    }
+    pendingImgBk=null;
+    buildSB();renderPrev();
+  };
+  r.readAsDataURL(this.files[0]);
+});
+function dropBk(ev,id,k){
+  ev.preventDefault();
+  const zone=ev.currentTarget;zone.classList.remove('drag-over');
+  const file=ev.dataTransfer.files[0];
+  if(!file||!file.type.startsWith('image/'))return;
+  const r=new FileReader();
+  r.onload=e=>{const bk=blocks.find(b=>b.id===id);if(bk){bk.fields[k]=e.target.result;}buildSB();renderPrev();};
   r.readAsDataURL(file);
 }
-function uimg(k,url,zid){
-  fields[k]=url;
+function updBkImg(id,k,url,zid){
+  const bk=blocks.find(b=>b.id===id);if(!bk)return;
+  bk.fields[k]=url;
   const z=document.getElementById(zid);
   if(!z)return;
   if(url){
-    z.classList.add('has-img');
-    z.innerHTML=`<div class="iz-tw"><img class="iz-thumb" src="${eh(url)}" alt=""><button class="iz-rm" onclick="event.stopPropagation();clr('${k}')">Remove</button></div>`;
+    z.classList.add('hi');
+    z.innerHTML=`<div class="iz-tw"><img class="iz-th" src="${eh(url)}" alt=""><button class="iz-rm" onclick="event.stopPropagation();clrBk('${id}','${k}')">Remove</button></div>`;
   } else {
-    z.classList.remove('has-img');
-    z.innerHTML=`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop image or click</span></div>`;
+    z.classList.remove('hi');
+    z.innerHTML=`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop or click</span></div>`;
   }
   renderPrev();
 }
-function clr(k){fields[k]='';buildSB();renderPrev();}
+function clrBk(id,k){const bk=blocks.find(b=>b.id===id);if(bk)bk.fields[k]='';buildSB();renderPrev();}
 
-// ─── PREVIEW ─────────────────────────────────────────────────────────────────
+// ── PREVIEW ───────────────────────────────────────────────────────────────────
 function renderPrev(){
-  const html=T[mode][tplKey].render(fields);
   const fr=document.getElementById('pf');
-  fr.srcdoc=html;
+  fr.srcdoc=renderHTML();
   fr.onload=()=>{try{fr.style.height=Math.max(fr.contentDocument.documentElement.scrollHeight,400)+'px';}catch(e){fr.style.height='700px';}};
 }
 
-// ─── EXPORT ───────────────────────────────────────────────────────────────────
-function copyHTML(){
-  navigator.clipboard.writeText(T[mode][tplKey].render(fields)).then(()=>toast('HTML copied'));
-}
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function copyHTML(){navigator.clipboard.writeText(renderHTML()).then(()=>toast('HTML copied'));}
 function ctag(t){navigator.clipboard.writeText(t).then(()=>toast('Token copied'));}
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),1800);
-}
+function toast(msg){const el=document.getElementById('tst');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
 
 init();
 </script>
