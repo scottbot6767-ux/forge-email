@@ -415,7 +415,7 @@ const BD={
 
 // ── FRAME FIELD LABELS ────────────────────────────────────────────────────────
 const FL={
-  logo_text:'Brand / Logo',pre_header:'Preheader Text',issue_label:'Issue Label',
+  logo_text:'Brand / Logo Text',logo_src:'Logo Image',logo_height:'Logo Height (px)',pre_header:'Preheader Text',issue_label:'Issue Label',
   color_header:'Header Color',color_cta:'Accent / CTA Color',color_bg:'Background Color',
   footer_co:'Footer Company',footer_addr:'Footer Address',
   eyebrow:'Eyebrow Label',
@@ -425,6 +425,7 @@ const FL={
 };
 const FTA=new Set(['p1','p2','p3','ask','ps']);
 const FCOL=new Set(['color_header','color_cta','color_bg','color_accent']);
+const FIMG=new Set(['logo_src']);
 
 // ── FRAMES ────────────────────────────────────────────────────────────────────
 // Each frame: frameFields[], frameDefaults{}, defaultBlocks[], renderOpen(ff), renderClose(ff)
@@ -436,8 +437,8 @@ marketing:{
 
 dispatch:{
   label:'The Dispatch',
-  frameFields:['logo_text','pre_header','issue_label','color_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Your weekly edge in legal marketing.',issue_label:'Issue No. 12 — Feb 2026',color_header:'#0A0A0A',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','issue_label','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Your weekly edge in legal marketing.',issue_label:'Issue No. 12 — Feb 2026',color_header:'#0A0A0A',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'heading',fields:{text:'The one thing your competitors are doing that you\u2019re not.',size:'large',align:'left'}},
     {id:'b2',type:'text',fields:{text:'Most law firms treat their website like a billboard. Set it, forget it, hope for the best. But the firms outpacing you are doing something different.'}},
@@ -453,7 +454,7 @@ dispatch:{
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:${ff.color_header};padding:18px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${logoHTML(ff)}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#666;text-transform:uppercase;">${ff.issue_label}</td>
   </tr></table>
 </td></tr>`;
@@ -470,8 +471,8 @@ dispatch:{
 
 spotlight:{
   label:'Feature Spotlight',
-  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Something new just dropped.',color_header:'#0A0A0A',color_cta:'#1D4ED8',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Something new just dropped.',color_header:'#0A0A0A',color_cta:'#1D4ED8',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'image',fields:{src:'',alt:'Hero image',w:'100',align:'center'}},
     {id:'b2',type:'heading',fields:{text:'Track rankings that actually mean something.',size:'large',align:'left'}},
@@ -486,7 +487,7 @@ spotlight:{
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:${ff.color_header};height:4px;font-size:0;">&nbsp;</td></tr>
 <tr><td style="background:#fff;padding:20px 32px 22px;border-bottom:1px solid #eee;">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_header};text-transform:uppercase;">${ff.logo_text}</p>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_header};text-transform:uppercase;">${logoHTML(ff)}</p>
 </td></tr>`;
   },
   renderClose(ff){
@@ -501,8 +502,8 @@ spotlight:{
 
 cover_story:{
   label:'Cover Story',
-  frameFields:['logo_text','pre_header','eyebrow','color_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Inside this issue.',eyebrow:'Deep Dive',color_header:'#282828',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','eyebrow','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Inside this issue.',eyebrow:'Deep Dive',color_header:'#282828',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'image',fields:{src:'',alt:'Cover image',w:'100',align:'center'}},
     {id:'b2',type:'heading',fields:{text:'Why the best law firm sites are built like media companies.',size:'large',align:'left'}},
@@ -517,7 +518,7 @@ cover_story:{
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:${ff.color_header};padding:16px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;">${logoHTML(ff)}</td>
     <td align="right"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#888;text-transform:uppercase;">${ff.eyebrow}</p></td>
   </tr></table>
 </td></tr>`;
@@ -534,8 +535,8 @@ cover_story:{
 
 showcase_row:{
   label:'Showcase Row',
-  frameFields:['logo_text','pre_header','color_bg','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Three things worth your attention.',color_bg:'#14364d',color_cta:'#c6e005',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_bg','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Three things worth your attention.',color_bg:'#14364d',color_cta:'#c6e005',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'heading',fields:{text:'This week in legal SEO.',size:'large',align:'left'}},
     {id:'b2',type:'text',fields:{text:'Three reads, insights, and ideas curated by the Rankings.io team.'}},
@@ -548,7 +549,7 @@ showcase_row:{
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:${ff.color_bg};"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="padding:22px 28px;border-bottom:1px solid rgba(255,255,255,.1);">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_cta};text-transform:uppercase;">${ff.logo_text}</p>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_cta};text-transform:uppercase;">${logoHTML(ff)}</p>
 </td></tr>`;
   },
   renderClose(ff){
@@ -562,8 +563,8 @@ showcase_row:{
 
 dark_brief:{
   label:'Dark Brief',
-  frameFields:['logo_text','pre_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Read this before your next meeting.',color_cta:'#c6e005',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Read this before your next meeting.',color_cta:'#c6e005',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'image',fields:{src:'',alt:'Hero image',w:'100',align:'center'}},
     {id:'b2',type:'heading',fields:{text:'Your firm\u2019s biggest competitor isn\u2019t another law firm.',size:'large',align:'left'}},
@@ -577,7 +578,7 @@ dark_brief:{
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#141414;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="padding:20px 28px;border-bottom:1px solid #222;">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_cta};text-transform:uppercase;">${ff.logo_text}</p>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_cta};text-transform:uppercase;">${logoHTML(ff)}</p>
 </td></tr>`;
   },
   renderClose(ff){
@@ -591,8 +592,8 @@ dark_brief:{
 
 case_study:{
   label:'Case Study',
-  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'A real result from a real client.',color_header:'#0A0A0A',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'A real result from a real client.',color_header:'#0A0A0A',color_cta:'#C8391A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'image',fields:{src:'',alt:'Case study banner',w:'100',align:'center'}},
     {id:'b2',type:'heading',fields:{text:'From page 4 to page 1 in 6 months.',size:'large',align:'left'}},
@@ -607,7 +608,7 @@ case_study:{
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:${ff.color_header};padding:18px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${logoHTML(ff)}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:1.5px;color:#888;text-transform:uppercase;">Case Study</td>
   </tr></table>
 </td></tr>`;
@@ -624,8 +625,8 @@ case_study:{
 
 event_invite:{
   label:'Event Invite',
-  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'You\u2019re invited.',color_header:'#14364d',color_cta:'#3a93cf',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'You\u2019re invited.',color_header:'#14364d',color_cta:'#3a93cf',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'image',fields:{src:'',alt:'Event banner',w:'100',align:'center'}},
     {id:'b2',type:'heading',fields:{text:'The Legal Marketing Summit — March 18, 2026',size:'large',align:'left'}},
@@ -640,7 +641,7 @@ event_invite:{
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f5f5f3;"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:#fff;padding:18px 28px;border-bottom:1px solid #eee;">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_header};text-transform:uppercase;">${ff.logo_text}</p>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:${ff.color_header};text-transform:uppercase;">${logoHTML(ff)}</p>
 </td></tr>`;
   },
   renderClose(ff){
@@ -654,8 +655,8 @@ event_invite:{
 
 the_grid:{
   label:'The Grid',
-  frameFields:['logo_text','pre_header','color_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Four stories, four images.',color_header:'#0A0A0A',color_cta:'#3a93cf',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Four stories, four images.',color_header:'#0A0A0A',color_cta:'#3a93cf',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'heading',fields:{text:'The week in legal marketing.',size:'medium',align:'left'}},
     {id:'b2',type:'two_col',fields:{left_src:'',left_caption:'Google\u2019s algo update hit 40% of legal sites. Here\u2019s what changed.',right_src:'',right_caption:'The anatomy of a page-one PI landing page in 2026.'}},
@@ -669,7 +670,7 @@ the_grid:{
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:${ff.color_header};padding:18px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${logoHTML(ff)}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#888;text-transform:uppercase;">The Grid</td>
   </tr></table>
 </td></tr>`;
@@ -686,8 +687,8 @@ the_grid:{
 
 bold_drop:{
   label:'Bold Drop',
-  frameFields:['logo_text','pre_header','color_bg','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'New from Rankings.io.',color_bg:'#EEDC82',color_cta:'#282828',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_bg','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'New from Rankings.io.',color_bg:'#EEDC82',color_cta:'#282828',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'heading',fields:{text:'Three tools we\u2019re shipping this quarter.',size:'large',align:'left'}},
     {id:'b2',type:'text',fields:{text:'We\u2019ve been heads down building. Here\u2019s what\u2019s coming out of the lab and into your dashboard.'}},
@@ -702,7 +703,7 @@ bold_drop:{
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:${bg};"><tr><td align="center" style="padding:28px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="padding:20px 28px;border-bottom:2px solid rgba(0,0,0,.12);">
-  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#0a0a0a;text-transform:uppercase;">${ff.logo_text}</p>
+  <p style="margin:0;font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#0a0a0a;text-transform:uppercase;">${logoHTML(ff)}</p>
 </td></tr>`;
   },
   renderClose(ff){
@@ -717,8 +718,8 @@ bold_drop:{
 
 the_studio:{
   label:'The Studio',
-  frameFields:['logo_text','pre_header','color_cta','footer_co','footer_addr'],
-  frameDefaults:{logo_text:'RANKINGS.IO',pre_header:'Work that speaks.',color_cta:'#0A0A0A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
+  frameFields:['logo_src','logo_text','logo_height','pre_header','color_cta','footer_co','footer_addr'],
+  frameDefaults:{logo_src:'',logo_text:'RANKINGS.IO',logo_height:'40',pre_header:'Work that speaks.',color_cta:'#0A0A0A',footer_co:'Rankings.io',footer_addr:'123 Main St, Salt Lake City, UT 84101'},
   defaultBlocks:[
     {id:'b1',type:'image',fields:{src:'',alt:'Studio hero',w:'100',align:'center'}},
     {id:'b2',type:'heading',fields:{text:'What exceptional legal marketing looks like.',size:'large',align:'left'}},
@@ -733,7 +734,7 @@ the_studio:{
 <table border="0" cellpadding="0" cellspacing="0" width="600">
 <tr><td style="background:#0a0a0a;padding:20px 28px;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${ff.logo_text}</td>
+    <td style="font-family:'Arial Black',Arial,sans-serif;font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;text-transform:uppercase;">${logoHTML(ff)}</td>
     <td align="right" style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:2px;color:#444;text-transform:uppercase;">Studio</td>
   </tr></table>
 </td></tr>`;
@@ -754,8 +755,8 @@ sales:{
 
 outreach:{
   label:'Personal Outreach',
-  frameFields:['company','greeting','p1','p2','p3','signoff','sender_name','sender_title','sender_email','ps','color_accent'],
-  frameDefaults:{company:'Rankings.io',greeting:'Hi {{ contact.firstname }},',
+  frameFields:['logo_src','logo_height','company','greeting','p1','p2','p3','signoff','sender_name','sender_title','sender_email','ps','color_accent'],
+  frameDefaults:{logo_src:'',logo_height:'36',company:'Rankings.io',greeting:'Hi {{ contact.firstname }},',
     p1:'I came across {{ contact.company }} and noticed you\u2019ve been building a real presence in your market. Most law firms your size are leaving a significant amount of organic search traffic on the table \u2014 not because they\u2019re doing anything wrong, but because the opportunity is easy to miss.',
     p2:'We work specifically with law firms on SEO and digital growth. I\u2019d love to share a quick look at where you currently rank vs. where you could be \u2014 no pitch, just useful data.',
     p3:'Worth a 20-minute call this week?',signoff:'Best,',
@@ -774,7 +775,7 @@ outreach:{
   <td style="width:6px;height:2px;background:#ddd;font-size:0;">&nbsp;</td>
 </tr></table></td></tr>
 <tr><td style="background:#fff;padding:38px 40px 34px;border-top:2px solid ${ff.color_accent};">
-  <p style="margin:0 0 26px;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${ff.company}</p>
+  <p style="margin:0 0 26px;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${logoHTML(ff)}</p>
   <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.greeting}</p>
   <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.p1}</p>
   <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#1a1a1a;">${ff.p2}</p>
@@ -796,8 +797,8 @@ outreach:{
 
 followup:{
   label:'Follow-Up',
-  frameFields:['company','greeting','context_note','p1','p2','ask','signoff','sender_name','sender_title','color_accent'],
-  frameDefaults:{company:'Rankings.io',greeting:'Hey {{ contact.firstname }} \u2014',context_note:'Re: your firm\u2019s search visibility',
+  frameFields:['logo_src','logo_height','company','greeting','context_note','p1','p2','ask','signoff','sender_name','sender_title','color_accent'],
+  frameDefaults:{logo_src:'',logo_height:'36',company:'Rankings.io',greeting:'Hey {{ contact.firstname }} \u2014',context_note:'Re: your firm\u2019s search visibility',
     p1:'I know inboxes are brutal, so I\u2019ll keep this short: I genuinely think there\u2019s an opportunity here worth 20 minutes of your time.',
     p2:'We\u2019ve helped firms like yours go from page 3 to page 1 for their most valuable search terms \u2014 and the compounding effect on inbound is significant.',
     ask:'If now\u2019s not the right time, just let me know and I\u2019ll follow up in a few months. No pressure.',
@@ -810,7 +811,7 @@ followup:{
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#fff;"><tr><td align="center" style="padding:48px 16px;">
 <table border="0" cellpadding="0" cellspacing="0" width="520">
 <tr><td style="padding-bottom:32px;"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td style="height:1px;background:#e8e8e8;font-size:0;">&nbsp;</td></tr></table></td></tr>
-<tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${ff.company}</p></td></tr>
+<tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ccc;">${logoHTML(ff)}</p></td></tr>
 <tr><td style="padding-bottom:24px;"><p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:#bbb;font-style:italic;">${ff.context_note}</p></td></tr>
 <tr><td>
   <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:16px;line-height:1.8;color:#111;">${ff.greeting}</p>
@@ -835,6 +836,16 @@ const eh=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,
 const et=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 let _uid=1;
 const uid=()=>'b'+(++_uid)+'_'+Math.random().toString(36).slice(2,6);
+
+// Renders logo: image if logo_src set, otherwise logo_text (or company as fallback)
+function logoHTML(f){
+  if(f.logo_src){
+    const h=parseInt(f.logo_height||'40');
+    const alt=f.logo_text||f.company||'Logo';
+    return `<img src="${f.logo_src}" alt="${alt}" height="${h}" style="display:block;height:${h}px;max-height:${h}px;width:auto;border:0;">`;
+  }
+  return f.logo_text||f.company||'';
+}
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 function init(){applyMode('marketing');}
@@ -885,7 +896,23 @@ function buildSB(){
   // Frame fields
   fr.frameFields.forEach(k=>{
     const lbl=FL[k]||k, val=ff[k]||'';
-    if(FCOL.has(k)){
+    if(FIMG.has(k)){
+      const hasImg=val.length>0;
+      const zid=`ffiz-${k}`;
+      h+=`<div class="fw"><div class="fl">${lbl}</div>
+        <div class="iz${hasImg?' hi':''}" id="${zid}"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="dropFF(event,'${k}')"
+          onclick="pickFF('${k}')">
+          ${hasImg
+            ?`<div class="iz-tw"><img class="iz-th" src="${eh(val)}" alt=""><button class="iz-rm" onclick="event.stopPropagation();clrFF('${k}')">Remove</button></div>`
+            :`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop or click</span></div>`}
+        </div>
+        <input type="text" class="fi" placeholder="...or paste image URL" value="${eh(val)}" oninput="updFFImg('${k}',this.value,'${zid}')">
+        <p class="in">Use hosted URL for actual sends. Image replaces the text logo.</p>
+      </div>`;
+    } else if(FCOL.has(k)){
       const sw=BRAND.map(c=>`<div class="sw" style="background:${c.h};" title="${c.n}" onclick="abrand_ff('${k}','${c.h}')"></div>`).join('');
       h+=`<div class="fw"><div class="fl">${lbl}</div>
         <div class="cr"><input type="color" value="${eh(val)}" oninput="scolff('${k}',this)">
@@ -1006,6 +1033,33 @@ function scolff(k,cp){ff[k]=cp.value;cp.parentNode.querySelector('input[type="te
 function stxtff(k,ti){ff[k]=ti.value;if(/^#[0-9A-Fa-f]{6}$/.test(ti.value))ti.parentNode.querySelector('input[type="color"]').value=ti.value;renderPrev();}
 function abrand_ff(k,h){ff[k]=h;buildSB();renderPrev();}
 
+// Frame image fields
+let pendingFF=null;
+function pickFF(k){pendingFF=k;pendingImgBk=null;const f=document.getElementById('fui');f.value='';f.click();}
+function dropFF(ev,k){
+  ev.preventDefault();
+  const zone=ev.currentTarget;zone.classList.remove('drag-over');
+  const file=ev.dataTransfer.files[0];
+  if(!file||!file.type.startsWith('image/'))return;
+  const r=new FileReader();
+  r.onload=e=>{ff[k]=e.target.result;buildSB();renderPrev();};
+  r.readAsDataURL(file);
+}
+function updFFImg(k,url,zid){
+  ff[k]=url;
+  const z=document.getElementById(zid);
+  if(!z)return;
+  if(url){
+    z.classList.add('hi');
+    z.innerHTML=`<div class="iz-tw"><img class="iz-th" src="${eh(url)}" alt=""><button class="iz-rm" onclick="event.stopPropagation();clrFF('${k}')">Remove</button></div>`;
+  } else {
+    z.classList.remove('hi');
+    z.innerHTML=`<div class="iz-hint"><svg class="iz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span class="iz-txt">Drop or click</span></div>`;
+  }
+  renderPrev();
+}
+function clrFF(k){ff[k]='';buildSB();renderPrev();}
+
 // ── BLOCK OPS ─────────────────────────────────────────────────────────────────
 function toggleBk(id){
   if(expandedBlks.has(id))expandedBlks.delete(id); else expandedBlks.add(id);
@@ -1064,11 +1118,14 @@ document.getElementById('fui').addEventListener('change',function(){
   if(!this.files||!this.files[0])return;
   const r=new FileReader();
   r.onload=e=>{
-    if(pendingImgBk){
+    if(pendingFF){
+      ff[pendingFF]=e.target.result;
+      pendingFF=null;
+    } else if(pendingImgBk){
       const bk=blocks.find(b=>b.id===pendingImgBk.id);
       if(bk){bk.fields[pendingImgBk.k]=e.target.result;}
+      pendingImgBk=null;
     }
-    pendingImgBk=null;
     buildSB();renderPrev();
   };
   r.readAsDataURL(this.files[0]);
