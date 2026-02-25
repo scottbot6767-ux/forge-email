@@ -132,6 +132,30 @@
     }
     .img-note a { color: #555; }
 
+    /* ── BRAND SWATCHES ── */
+    .swatch-row {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+      transition: transform 0.1s, box-shadow 0.1s;
+      position: relative;
+    }
+    .swatch:hover {
+      transform: scale(1.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+    .swatch[title] { cursor: pointer; }
+
     /* ── MERGE TAGS ── */
     .tags-wrap { padding: 12px 14px; }
     .tags-note { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
@@ -254,6 +278,17 @@ const LABELS = {
 const TEXTAREA_KEYS = new Set(['body_1','body_2','pull_quote','hero_sub','f1_desc','f2_desc','f3_desc','p1','p2','p3','ask','ps']);
 const COLOR_KEYS    = new Set(['color_header','color_cta','color_accent']);
 const IMAGE_KEYS    = new Set(['img_hero','img_content','img_logo']);
+
+// Rankings.io brand palette
+const BRAND_COLORS = [
+  { name: 'Tuxedo',      hex: '#282828' },
+  { name: 'Suede',       hex: '#fcfaec' },
+  { name: 'Pearl',       hex: '#ffffff' },
+  { name: 'Sky',         hex: '#3a93cf' },
+  { name: 'Midnight',    hex: '#14364d' },
+  { name: 'Flax',        hex: '#eedc82' },
+  { name: 'Chartreuse',  hex: '#c6e005' },
+];
 
 // ═══════════════════════════════════════════════════════════════════════
 // TEMPLATES
@@ -619,12 +654,16 @@ function buildSidebar() {
       </div>`;
 
     } else if (COLOR_KEYS.has(k)) {
+      const swatches = BRAND_COLORS.map(c =>
+        `<div class="swatch" style="background:${c.hex};" title="${c.name} ${c.hex}" onclick="applyBrandColor('${k}','${c.hex}')"></div>`
+      ).join('');
       html += `<div class="field-wrap">
         <div class="field-label">${label}</div>
         <div class="color-row">
           <input type="color" value="${escH(val)}" oninput="syncColor('${k}',this)">
           <input type="text" class="field-input" style="flex:1;" value="${escH(val)}" oninput="syncText('${k}',this)">
         </div>
+        <div class="swatch-row">${swatches}</div>
       </div>`;
 
     } else if (TEXTAREA_KEYS.has(k)) {
@@ -667,6 +706,23 @@ function syncColor(k,cp) {
 function syncText(k,ti) {
   const v=ti.value; fields[k]=v;
   if(/^#[0-9A-Fa-f]{6}$/.test(v)) ti.parentNode.querySelector('input[type="color"]').value=v;
+  renderPreview();
+}
+
+function applyBrandColor(k, hex) {
+  fields[k] = hex;
+  // Update the inputs in the same field-wrap without a full rebuild
+  const swatchRows = document.querySelectorAll('.swatch-row');
+  swatchRows.forEach(row => {
+    const wrap = row.parentNode;
+    const colorPicker = wrap.querySelector('input[type="color"]');
+    const textInput   = wrap.querySelector('input[type="text"]');
+    // Identify which field this wrap belongs to by checking its oninput
+    if (textInput && textInput.getAttribute('oninput') && textInput.getAttribute('oninput').includes(`'${k}'`)) {
+      colorPicker.value = hex;
+      textInput.value   = hex;
+    }
+  });
   renderPreview();
 }
 
