@@ -70,6 +70,14 @@
     .bs.on{background:var(--ac);border-color:var(--ac);color:#000;font-weight:500}
     .is{flex:1;background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:2px;cursor:pointer}
     .is option{background:#1a1a1a}
+    /* slider controls */
+    .sl-wrap{display:flex;flex-direction:column;gap:5px;width:100%}
+    .sl-row{display:flex;align-items:center;gap:8px}
+    .sl-val{font-family:'DM Mono',monospace;font-size:9px;color:var(--ac);min-width:36px;text-align:right;flex-shrink:0}
+    .sl-labels{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:8px;color:var(--mt);padding:0 2px}
+    input[type="range"]{-webkit-appearance:none;appearance:none;flex:1;height:3px;background:var(--bd2);border-radius:2px;outline:none;cursor:pointer;margin:0}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;background:var(--ac);cursor:pointer;border:none}
+    input[type="range"]::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--ac);cursor:pointer;border:none}
     .ii{flex:1;background:var(--bg);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:2px}
     .ii:focus{outline:none;border-color:var(--ac)}
 
@@ -1001,11 +1009,28 @@ function renderBkFields(bk){
         <p class="in">Use hosted URL for actual sends.</p>${note}
       </div>`;
     } else if(fd.t==='widthbtns'){
-      const btns=['25','50','75','100'].map(w=>`<button class="bs${val===w?' on':''}" onclick="updBk('${bk.id}','${fd.k}','${w}')">${w}%</button>`).join('');
-      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div>${note}</div>`;
+      const wv=parseInt(val||'100');
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
+        <div class="sl-wrap">
+          <div class="sl-row">
+            <input type="range" min="10" max="100" step="5" value="${wv}"
+              oninput="updBk('${bk.id}','${fd.k}',this.value);this.nextElementSibling.textContent=this.value+'%'">
+            <span class="sl-val">${wv}%</span>
+          </div>
+        </div>${note}</div>`;
     } else if(fd.t==='alignbtns'){
-      const btns=['left','center','right'].map(a=>`<button class="bs${val===a?' on':''}" onclick="updBk('${bk.id}','${fd.k}','${a}')">${a.charAt(0).toUpperCase()+a.slice(1)}</button>`).join('');
-      h+=`<div class="bk-field"><div class="fl">${fd.l}</div><div class="bg">${btns}</div>${note}</div>`;
+      const AVALS=['left','center','right'];
+      const aIdx=Math.max(0,AVALS.indexOf(val||'center'));
+      const aLabel=AVALS[aIdx].charAt(0).toUpperCase()+AVALS[aIdx].slice(1);
+      h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
+        <div class="sl-wrap">
+          <div class="sl-row">
+            <input type="range" min="0" max="2" step="1" value="${aIdx}"
+              oninput="updBk('${bk.id}','${fd.k}',['left','center','right'][parseInt(this.value)]);this.nextElementSibling.textContent=['Left','Center','Right'][parseInt(this.value)]">
+            <span class="sl-val">${aLabel}</span>
+          </div>
+          <div class="sl-labels"><span>Left</span><span>Center</span><span>Right</span></div>
+        </div>${note}</div>`;
     } else if(fd.t==='select'){
       h+=`<div class="bk-field"><div class="fl">${fd.l}</div>
         <select class="fi" onchange="updBk('${bk.id}','${fd.k}',this.value)">
